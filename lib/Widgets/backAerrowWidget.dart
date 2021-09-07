@@ -1,0 +1,120 @@
+import 'package:flutter/material.dart';
+import 'package:timepass/Screens/profile_Screen.dart';
+import 'package:timepass/Widgets/moreWidget.dart';
+
+class BackAerrowWidget extends StatelessWidget {
+  Widget leadingIcon(double height, double width) {
+    return Container(
+      alignment: Alignment.center,
+      padding: EdgeInsets.only(
+        left: width * 0.01,
+      ),
+      height: height * 0.08,
+      width: width * 0.09,
+      decoration: BoxDecoration(
+        color: Color.fromRGBO(255, 255, 255, 1),
+        boxShadow: [
+          BoxShadow(
+            color: Color.fromRGBO(
+              0,
+              0,
+              0,
+              0.25,
+            ),
+            blurRadius: 14,
+            spreadRadius: 0,
+            offset: Offset(6, 6),
+          )
+        ],
+        shape: BoxShape.circle,
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: Icon(
+          Icons.arrow_back_ios,
+          size: 13,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    return leadingIcon(height, width);
+  }
+}
+
+AppBar appbarOfHOmepage(double height, double width, BuildContext context) {
+  return AppBar(
+    leading: GestureDetector(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MoreWidget();
+        }));
+      },
+      child: Container(
+          margin: EdgeInsets.only(
+            left: MediaQuery.of(context).size.width * 0.01,
+            top: MediaQuery.of(context).size.height * 0.02,
+            bottom: MediaQuery.of(context).size.height * 0.01,
+          ),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.blue,
+          ),
+          height: MediaQuery.of(context).size.height * 0.01,
+          width: MediaQuery.of(context).size.width * 0.01,
+          child: Image(
+            alignment: Alignment.center,
+            height: MediaQuery.of(context).size.height * 0.02,
+            image: AssetImage(
+              "assets/images/leadingIcon.png",
+            ),
+          )),
+    ),
+    actions: [
+      GestureDetector(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return ProfileScreen();
+          }));
+        },
+        child: Container(
+            margin: EdgeInsets.only(
+              right: MediaQuery.of(context).size.width * 0.02,
+            ),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.blue,
+            ),
+            height: MediaQuery.of(context).size.height * 0.07,
+            width: MediaQuery.of(context).size.width * 0.07,
+            child: Image(
+              alignment: Alignment.center,
+              image: AssetImage(
+                "assets/images/profileImage.png",
+              ),
+            )),
+      ),
+    ],
+    elevation: 0,
+    title: Container(
+      margin: EdgeInsets.only(
+        top: MediaQuery.of(context).size.height * 0.011,
+      ),
+      height: MediaQuery.of(context).size.height * 0.08,
+      width: MediaQuery.of(context).size.width * 0.15,
+      child: Image.asset(
+        "assets/images/socioClub2x.png",
+        fit: BoxFit.fill,
+      ),
+    ),
+    centerTitle: true,
+    backgroundColor: Colors.white,
+  );
+}

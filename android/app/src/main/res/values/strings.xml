@@ -1,0 +1,5 @@
+<resources>
+<string name="app_name">Timepass</string>
+<string name="facebook_app_id">160384972821399</string>
+<string name="fb_login_protocol_scheme">fb160384972821399</string>
+</resources>

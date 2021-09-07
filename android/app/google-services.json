@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "471050064962",
+    "project_id": "socio-club",
+    "storage_bucket": "socio-club.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:471050064962:android:25702dfb9efb25166909db",
+        "android_client_info": {
+          "package_name": "com.example.timepass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "471050064962-v3h3f6io7f2mgii84fbn4poev0irkc6f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.timepass",
+            "certificate_hash": "9c6ca37c800e5588fb73fb2183476ace735c8db1"
+          }
+        },
+        {
+          "client_id": "471050064962-20kgtcfl01cmbimcfjkkvf70gg3tjdtb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnkDsFwDUIBNuk5W3LDKmRnOX4aySeZZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "471050064962-20kgtcfl01cmbimcfjkkvf70gg3tjdtb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
