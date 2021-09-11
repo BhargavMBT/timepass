@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +6,13 @@ import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:timepass/Authentication/OtpVerification.dart';
 
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Authentication/createUserProfile.dart';
 
 import 'package:timepass/Widgets/bottomNavigationWidget.dart';
+import 'package:timepass/main.dart';
 
 enum MobileVerificationState {
   SHOW_MOBILE_FORM_STATE,
@@ -25,6 +25,8 @@ class MobileNumberAuthScreen extends StatefulWidget {
   final String? userid;
   final String? email;
   final String? typeOfSignup;
+  final AuthCredential? credential;
+  final String? password;
 
   MobileNumberAuthScreen({
     this.name,
@@ -32,6 +34,8 @@ class MobileNumberAuthScreen extends StatefulWidget {
     this.email,
     this.userid,
     this.typeOfSignup,
+    this.credential,
+    this.password,
   });
 
   @override
@@ -67,12 +71,11 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
     setState(() {
       isloading = true;
     });
-    AuthService().auth.verifyPhoneNumber(
+    mobileAuth.verifyPhoneNumber(
         phoneNumber: phonenumber,
         timeout: Duration(seconds: 45),
         verificationCompleted: (AuthCredential authCredential) {
-          AuthService()
-              .auth
+          mobileAuth
               .signInWithCredential(authCredential)
               .then((UserCredential result) {
             Navigator.pushReplacement(
@@ -111,13 +114,12 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
     setState(() {
       isloading = true;
     });
-    AuthService().auth.verifyPhoneNumber(
+    mobileAuth.verifyPhoneNumber(
         phoneNumber: phonenumber,
         forceResendingToken: resendToeken,
         timeout: Duration(seconds: 45),
         verificationCompleted: (AuthCredential authCredential) {
-          AuthService()
-              .auth
+          mobileAuth
               .signInWithCredential(authCredential)
               .then((UserCredential result) {
             Navigator.pushReplacement(
@@ -207,6 +209,10 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
   Widget getOtpButton(double height, double width) {
     return GestureDetector(
       onTap: () {
+        // Navigator.push(context,
+        //     MaterialPageRoute(builder: (BuildContext context) {
+        //   return OtpVerification();
+        // }));
         if (mobileController.text.trim().isNotEmpty &&
             mobileController.text.trim().length == 10) {
           setState(() {
@@ -267,15 +273,20 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
             );
 
             UserCredential result =
-                await AuthService().auth.signInWithCredential(credential);
+                await mobileAuth.signInWithCredential(credential);
 
             User? user = result.user;
 
             if (user != null) {
+              // await mobileAuth.signOut();
+              await auth.signInWithEmailAndPassword(
+                  email: widget.email!, password: widget.password!);
+
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => CreateUserProfile(
+                    phoneNumber: mobileController.text,
                     email: widget.email,
                     imageurl: widget.imageurl,
                     name: widget.name,
@@ -293,7 +304,15 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
           } on FirebaseAuthException catch (e) {
             AuthService().errorDialog(context, e.code);
           } catch (e) {
+            print(e.toString());
+            setState(() {
+              currentState = MobileVerificationState.SHOW_MOBILE_FORM_STATE;
+            });
             AuthService().errorDialog(context, "Something went wrong!");
+          } finally {
+            setState(() {
+              isloading = false;
+            });
           }
         } else {
           AuthService().errorDialog(context, "Enter a correct OTP.");

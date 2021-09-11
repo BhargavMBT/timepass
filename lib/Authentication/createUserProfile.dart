@@ -1,12 +1,19 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Utils/textTitleWidgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:timepass/Widgets/bottomNavigationWidget.dart';
+import 'package:timepass/Widgets/progressIndicators.dart';
+import 'package:timepass/main.dart';
 
 class CreateUserProfile extends StatefulWidget {
   final String? name;
@@ -14,9 +21,16 @@ class CreateUserProfile extends StatefulWidget {
   final String? userid;
   final String? email;
   final String? typeOfSignup;
+  final String? phoneNumber;
 
-  CreateUserProfile(
-      {this.name, this.imageurl, this.email, this.userid, this.typeOfSignup});
+  CreateUserProfile({
+    this.name,
+    this.imageurl,
+    this.email,
+    this.userid,
+    this.typeOfSignup,
+    this.phoneNumber,
+  });
 
   @override
   _CreateUserProfileState createState() => _CreateUserProfileState();
@@ -31,6 +45,110 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
       controller.text = widget.name!;
     }
     super.initState();
+  }
+
+  File? file;
+
+  void cameraOpenforImage() async {
+    Navigator.pop(context);
+    XFile? imageFile =
+        await ImagePicker().pickImage(source: ImageSource.camera);
+    if (imageFile != null) {
+      setState(() {
+        file = File(imageFile.path);
+      });
+    }
+  }
+
+  void galleryForImageOpen() async {
+    Navigator.pop(context);
+    XFile? imageFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (imageFile != null) {
+      setState(() {
+        file = File(imageFile.path);
+      });
+    }
+  }
+
+  Widget itemsofmedia(Icon icon, String title, Icon icon2, var fun) {
+    return GestureDetector(
+      onTap: () {
+        fun();
+      },
+      child: ListTile(
+        title: Text(title),
+        leading: icon,
+        trailing: icon2,
+      ),
+    );
+  }
+
+  Future mediaPickerDialog(double height, double width) {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Center(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: EdgeInsets.symmetric(
+                horizontal: width * 0.15,
+              ),
+              child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Container(
+                  margin: EdgeInsets.only(
+                    left: width * 0.035,
+                    top: height * 0.015,
+                    bottom: height * 0.015,
+                  ),
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Select an image",
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                    ),
+                  ),
+                ),
+                itemsofmedia(
+                  Icon(
+                    EvaIcons.camera,
+                    color: Colors.black87,
+                  ),
+                  'Camera',
+                  Icon(
+                    EvaIcons.chevronRight,
+                    color: Colors.black87,
+                  ),
+                  cameraOpenforImage,
+                ),
+                itemsofmedia(
+                  Icon(
+                    EvaIcons.imageOutline,
+                    color: Colors.black87,
+                  ),
+                  'Image Gallery',
+                  Icon(
+                    EvaIcons.chevronRight,
+                    color: Colors.black87,
+                  ),
+                  galleryForImageOpen,
+                ),
+              ]),
+            ),
+          );
+        });
+  }
+
+  makeImageUrl() async {
+    UploadTask storageTak = storage
+        .child(
+            'Users/profile_img_${widget.userid}_${DateTime.now().toIso8601String().toString()}')
+        .putFile(file!);
+    TaskSnapshot taskSnapshot = await storageTak.whenComplete(() {});
+    String downLoadUrl = await taskSnapshot.ref.getDownloadURL();
+    return downLoadUrl;
   }
 
   OutlineInputBorder border() {
@@ -49,37 +167,60 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
             height: height * 0.15,
             width: width * 0.3,
             decoration: widget.imageurl == null
-                ? BoxDecoration(
-                    color: Colors.grey[300],
-                    shape: BoxShape.circle,
-                  )
-                : BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        widget.imageurl!,
-                      ),
-                    ),
-                  )),
+                ? file == null
+                    ? BoxDecoration(
+                        color: Colors.grey[300],
+                        shape: BoxShape.circle,
+                      )
+                    : BoxDecoration(
+                        color: Colors.grey[300],
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(file!),
+                        ),
+                      )
+                : widget.imageurl != null && file != null
+                    ? BoxDecoration(
+                        color: Colors.grey[300],
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: FileImage(file!),
+                        ),
+                      )
+                    : BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            widget.imageurl!,
+                          ),
+                        ),
+                      )),
         Positioned(
           top: height * 0.08,
           right: width * 0.01,
-          child: Container(
-            height: height * 0.08,
-            width: width * 0.08,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.grey[300]!,
-                width: 0.5,
+          child: GestureDetector(
+            onTap: () {
+              mediaPickerDialog(height, width);
+            },
+            child: Container(
+              height: height * 0.08,
+              width: width * 0.08,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey[300]!,
+                  width: 0.5,
+                ),
+                color: whiteColor,
+                shape: BoxShape.circle,
               ),
-              color: whiteColor,
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Icon(
-              EvaIcons.edit,
-              size: height * 0.022,
+              alignment: Alignment.center,
+              child: Icon(
+                EvaIcons.edit,
+                size: height * 0.022,
+              ),
             ),
           ),
         )
@@ -110,31 +251,55 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
       loading = true;
     });
     try {
-      var weburl = "https://socioclub-api.herokuapp.com";
+      if (widget.imageurl != null || file != null) {
+        if (controller.text.isNotEmpty) {
+          var url = Uri.parse('$weburl/user/othersignup');
+          String photoUrl =
+              file != null ? await makeImageUrl() : widget.imageurl;
 
-      var url = Uri.parse('$weburl/user/othersignup');
-      var response = await http.post(url, body: {
-        'email': 'milindvaghasiya6@gmail.com',
-        'name': 'Milind',
-      });
+          var response = await http.post(url, body: {
+            // 'email': "milindvaghasiya6@gmail.com",
+            // 'name': "Milind"
+            'email': widget.email,
+            'name': widget.name == null ? controller.text : widget.name,
+            'phone': widget.phoneNumber,
+            'photourl': photoUrl,
+            'username': controller.text,
+          });
 
-      if (response.statusCode == 200) {
-        setState(() {
-          loading = false;
-        });
+          print(response.statusCode.toString());
+          if (response.statusCode == 200) {
+            print('Response body: ${response.body}');
+            setState(() {
+              xAccessToken = jsonDecode(response.body)['token'];
+              userid = jsonDecode(response.body)["result"]["_id"];
+              loading = false;
+            });
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (BuildContext context) {
-              return BottomNavigationBarWidget();
-            },
-          ),
-        );
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) {
+                  return BottomNavigationBarWidget();
+                },
+              ),
+            );
+          } else {
+            AuthService().errorDialog(
+              context,
+              "Oops! Something went wrong.",
+            );
+          }
+        } else {
+          AuthService().errorDialog(
+            context,
+            "Please enter a name.",
+          );
+        }
       } else {
         AuthService().errorDialog(
           context,
-          "Oops! Something went wrong",
+          "Select a profile image.",
         );
       }
     } catch (e) {
@@ -148,7 +313,6 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
       });
     }
     // print('Response status: ${}');
-    // print('Response body: ${response.body}');
   }
 
   button(double height, double width) {
@@ -188,11 +352,11 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    // print(widget.name);
-    // print(widget.email);
-    // print(widget.imageurl);
-    // print(widget.userid);
-
+    print(widget.name);
+    print(widget.email);
+    print(widget.imageurl);
+    print(widget.userid);
+    print(widget.phoneNumber);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Material(
@@ -208,12 +372,8 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                     )
                   : Container(),
               loading
-                  ? LinearProgressIndicator(
-                      minHeight: height * 0.005,
-                      backgroundColor: Colors.blue,
-                      valueColor: AlwaysStoppedAnimation(
-                        Colors.black,
-                      ),
+                  ? linearProgressIndicator(
+                      height,
                     )
                   : Container(),
               SizedBox(

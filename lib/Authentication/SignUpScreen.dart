@@ -109,22 +109,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 setState(() {
                   isloading = true;
                 });
-                AuthService()
-                    .signUp(
-                        emailcontroller.text, passwordcontroller.text, context)
-                    .then((value) {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return MobileNumberAuthScreen(
-                      email: value!.email,
-                      imageurl: value.photoURL,
-                      name: value.displayName,
-                      typeOfSignup: "Email",
-                      userid: value.uid,
-                    );
-                    // BottomNavigationBarWidget();
-                  }));
-                });
+                AuthService().signUp(
+                    emailcontroller.text, passwordcontroller.text, context);
+                //     .then((value) {
+                //   Navigator.pushReplacement(context,
+                //       MaterialPageRoute(builder: (BuildContext context) {
+                //     return MobileNumberAuthScreen(
+                //       email: value!.email,
+                //       imageurl: value.photoURL,
+                //       name: value.displayName,
+                //       typeOfSignup: "Email",
+                //       userid: value.uid,
+                //     );
+                //     // BottomNavigationBarWidget();
+                //   }));
+                // });
                 setState(() {
                   isloading = false;
                 });
@@ -138,7 +137,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
           } else {
             AuthService().errorDialog(context, "Enter valid email address.");
           }
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (BuildContext context) {
+          //   return MobileNumberAuthScreen();
+          // }));
         } else {
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (BuildContext context) {
+          //   return MobileNumberAuthScreen();
+          // }));
           print("sign in");
           bool emailValid = RegExp(
                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -148,21 +155,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
               setState(() {
                 isloading = true;
               });
-              AuthService()
-                  .signIn(emailcontroller.text.trim(), passwordcontroller.text,
-                      context)
-                  .then((value) {
-                if (value != null) {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) {
-                        return BottomNavigationBarWidget();
-                      },
-                    ),
-                  );
-                }
-              });
+              AuthService().signIn(emailcontroller.text.trim(),
+                  passwordcontroller.text, context);
+              //   .then((value) {
+              // if (value != null) {
+              //   Navigator.pushReplacement(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (BuildContext context) {
+              //         return BottomNavigationBarWidget();
+              //       },
+              //     ),
+              //   );
+              // }
+              // });
               setState(() {
                 isloading = false;
               });

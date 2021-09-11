@@ -1,14 +1,20 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/leaderBoard.dart';
 import 'package:timepass/Screens/profileSettings.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
+import 'package:http/http.dart' as http;
+import 'package:timepass/Widgets/progressIndicators.dart';
+import 'package:timepass/main.dart';
+import 'package:timepass/models/profileModel.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -18,6 +24,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  void initState() {
+    super.initState();
+  }
   //Leading icon
 
   //grid items
@@ -33,7 +42,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget container(double height, double width) {
+  Future getProfile() async {
+    try {
+      var url = Uri.parse('$weburl/profile');
+      var response;
+      if (xAccessToken != null) {
+        response = await http.get(url, headers: {
+          'x-access-token': xAccessToken!,
+        });
+        if (response.statusCode == 200) {
+          return response.body;
+        } else {
+          AuthService().errorDialog(
+            context,
+            "Oops! Something went wrong",
+          );
+        }
+      } else {
+        AuthService().errorDialog(
+          context,
+          "Oops! Something went wrong",
+        );
+      }
+    } catch (e) {
+      AuthService().errorDialog(
+        context,
+        "Oops! Something went wrong",
+      );
+    }
+  }
+
+  Future getUserPost() async {
+    try {
+      var url = Uri.parse('$weburl/posts/post/$userid');
+      var response;
+      if (xAccessToken != null) {
+        response = await http.get(url, headers: {
+          'x-access-token': xAccessToken!,
+        });
+        if (response.statusCode == 200) {
+          print(response.body);
+          return response.body;
+          // return response.body;
+        } else {
+          AuthService().errorDialog(
+            context,
+            "Oops! Something went wrong",
+          );
+        }
+      } else {
+        AuthService().errorDialog(
+          context,
+          "Oops! Something went wrong",
+        );
+      }
+    } catch (e) {
+      AuthService().errorDialog(
+        context,
+        "Oops! Something went wrong",
+      );
+    }
+  }
+
+  Widget container(double height, double width, String imageUrl) {
     return Stack(children: [
       Container(
         margin: EdgeInsets.symmetric(
@@ -52,10 +123,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               )
             ],
             image: DecorationImage(
-                fit: BoxFit.fill,
-                image: AssetImage(
-                  'assets/images/s${Random().nextInt(9) + 1}.jpg',
-                ))),
+              fit: BoxFit.fill,
+              image: NetworkImage(imageUrl),
+              // image: AssetImage(
+              //   'assets/images/s${Random().nextInt(9) + 1}.jpg',
+              // )
+            )),
       ),
       Align(
         alignment: Alignment.bottomRight,
@@ -88,22 +161,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   //gridview
   Widget gridview(double height, double width) {
-    return StaggeredGridView.countBuilder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        crossAxisCount: 2,
-        itemCount: 8,
-        padding: EdgeInsets.only(
-          left: width * 0.02,
-          right: width * 0.02,
-        ),
-        itemBuilder: (BuildContext context, int i) {
-          return container(height, width);
-        },
-        crossAxisSpacing: width * 0.02,
-        mainAxisSpacing: height * 0.015,
-        staggeredTileBuilder: (index) {
-          return StaggeredTile.count(1, index.isOdd ? 1 : 1.4);
+    return FutureBuilder(
+        future: getUserPost(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            var postDataList = jsonDecode(snapshot.data!);
+            List<ProfileModel> _list = [];
+            postDataList.forEach((element) {
+              ProfileModel model = ProfileModel.fromJson(element);
+              _list.add(model);
+            });
+            return _list.isEmpty
+                ? Container(
+                    height: height * 0.25,
+                    alignment: Alignment.center,
+                    child: Text("Posts are not generated."))
+                : StaggeredGridView.countBuilder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    crossAxisCount: 2,
+                    itemCount: _list.length,
+                    padding: EdgeInsets.only(
+                      left: width * 0.02,
+                      right: width * 0.02,
+                    ),
+                    itemBuilder: (BuildContext context, int i) {
+                      return container(
+                        height,
+                        width,
+                        _list[i].postUrl!,
+                      );
+                    },
+                    crossAxisSpacing: width * 0.02,
+                    mainAxisSpacing: height * 0.015,
+                    staggeredTileBuilder: (index) {
+                      return StaggeredTile.count(1, index.isOdd ? 1 : 1.4);
+                    });
+          } else {
+            return Container(
+              height: height * 0.6,
+              child: Center(child: circularProgressIndicator()),
+            );
+          }
         });
   }
 
@@ -201,10 +300,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: width * 0.22,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage(
+                      image: NetworkImage(
                         image,
                       ),
-                      fit: BoxFit.fill),
+                      fit: BoxFit.cover),
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(32),
                 ),
@@ -236,153 +335,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
             bottomLeft: Radius.circular(34),
             bottomRight: Radius.circular(34),
           )),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SizedBox(height: height * 0.015),
-            Container(
-              margin: EdgeInsets.only(
-                left: width * 0.045,
-                top: height * 0.025,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  storyContainer(
-                    height,
-                    width,
-                    "assets/images/story1.png",
-                  ),
-                  SizedBox(
-                    width: width * 0.04,
-                  ),
-                  Expanded(
-                    child: Container(
-                      child: Column(
+      child: FutureBuilder(
+          future: getProfile(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              var result = jsonDecode(snapshot.data);
+              UserProfile user = UserProfile.fromJson(result);
+              return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: height * 0.015),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: width * 0.045,
+                        top: height * 0.025,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Kiran Tej",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 22,
-                                      ),
+                          storyContainer(
+                            height,
+                            width,
+                            user.imageurl!,
+                          ),
+                          SizedBox(
+                            width: width * 0.04,
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              user.name.toString(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 22,
+                                              ),
+                                            ),
+                                            Text(
+                                              "vijayawada,AP",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder:
+                                                    (BuildContext context) {
+                                              return ProfileSettingsScreen();
+                                            }));
+                                          },
+                                          icon: Icon(
+                                            EvaIcons.settings2Outline,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ]),
+                                  Container(
+                                    margin: EdgeInsets.only(
+                                      right: width * 0.07,
+                                      top: height * 0.015,
                                     ),
-                                    Text(
-                                      "vijayawada,AP",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          alignment: Alignment.center,
+                                          height: height * 0.05,
+                                          width: width * 0.28,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              gradient: LinearGradient(colors: [
+                                                Color.fromRGBO(
+                                                    38, 203, 255, 0.86),
+                                                Color.fromRGBO(
+                                                    38, 203, 255, 0.5),
+                                                Color.fromRGBO(
+                                                    38, 203, 255, 0.48),
+                                              ])),
+                                          child: Text("Connect",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w600,
+                                              )),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(builder:
+                                                    (BuildContext context) {
+                                              return LeaderBoard();
+                                            }));
+                                          },
+                                          child: Container(
+                                            margin: EdgeInsets.only(
+                                                left: width * 0.04),
+                                            alignment: Alignment.center,
+                                            height: height * 0.05,
+                                            width: width * 0.28,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                gradient:
+                                                    LinearGradient(colors: [
+                                                  Color.fromRGBO(
+                                                      200, 16, 46, 0.63),
+                                                  Color.fromRGBO(
+                                                      200, 16, 46, 0.76),
+                                                  Color.fromRGBO(
+                                                      200, 16, 46, 0.47),
+                                                ])),
+                                            child: Text("Message",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w600,
+                                                )),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                      return ProfileSettingsScreen();
-                                    }));
-                                  },
-                                  icon: Icon(
-                                    EvaIcons.settings2Outline,
-                                    color: Colors.white,
                                   ),
-                                ),
-                              ]),
-                          Container(
-                            margin: EdgeInsets.only(
-                              right: width * 0.07,
-                              top: height * 0.015,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  alignment: Alignment.center,
-                                  height: height * 0.05,
-                                  width: width * 0.28,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      gradient: LinearGradient(colors: [
-                                        Color.fromRGBO(38, 203, 255, 0.86),
-                                        Color.fromRGBO(38, 203, 255, 0.5),
-                                        Color.fromRGBO(38, 203, 255, 0.48),
-                                      ])),
-                                  child: Text("Connect",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      )),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(
-                                        builder: (BuildContext context) {
-                                      return LeaderBoard();
-                                    }));
-                                  },
-                                  child: Container(
-                                    margin: EdgeInsets.only(left: width * 0.04),
-                                    alignment: Alignment.center,
-                                    height: height * 0.05,
-                                    width: width * 0.28,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        gradient: LinearGradient(colors: [
-                                          Color.fromRGBO(200, 16, 46, 0.63),
-                                          Color.fromRGBO(200, 16, 46, 0.76),
-                                          Color.fromRGBO(200, 16, 46, 0.47),
-                                        ])),
-                                    child: Text("Message",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                        )),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(
-                left: width * 0.15,
-                right: width * 0.15,
-                top: height * 0.028,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  calculationsWidget(height, width, "100", "Stories"),
-                  calculationsWidget(height, width, "50", "Connections"),
-                  calculationsWidget(height, width, "5K", "Total likes"),
-                ],
-              ),
-            ),
-            centerbar(height, width),
-          ]),
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: width * 0.15,
+                        right: width * 0.15,
+                        top: height * 0.028,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          calculationsWidget(height, width, "100", "Stories"),
+                          calculationsWidget(
+                              height,
+                              width,
+                              user.connections!.length.toString(),
+                              "Connections"),
+                          calculationsWidget(
+                              height, width, "5K", "Total likes"),
+                        ],
+                      ),
+                    ),
+                    centerbar(height, width),
+                  ]);
+            } else if (snapshot.hasError) {
+              return Text("Something went wrong");
+            } else {
+              return Center(
+                child: circularProgressIndicator(),
+              );
+            }
+          }),
     );
   }
 

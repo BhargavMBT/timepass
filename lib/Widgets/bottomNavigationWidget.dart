@@ -3,6 +3,7 @@ import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.da
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:timepass/Screens/PostAddScreen.dart';
+import 'package:timepass/Screens/StoryAddingScreen.dart';
 import 'package:timepass/Screens/chat_Screen.dart';
 import 'package:timepass/Screens/home_Screen.dart';
 import 'package:timepass/Screens/profile_Screen.dart';
@@ -10,6 +11,7 @@ import 'package:timepass/Screens/searchScreen.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/drawerWidget.dart';
 import 'package:timepass/Widgets/title_Widget.dart';
+import 'package:timepass/main.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({Key? key}) : super(key: key);
@@ -25,7 +27,8 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   List<Widget> _screens = [
     HomeScreen(),
     SearchScreen(),
-    PostAddScreen(),
+    StoryAdding(),
+    // PostAddScreen(),
     Container(
       child: Text("Screen 4"),
       color: Colors.white,
@@ -33,8 +36,6 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     ),
     ChatScreen(),
   ];
-
-  
 
   Widget icon(IconData icon) {
     return Icon(
@@ -45,6 +46,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    print(userid);
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
           statusBarColor: Theme.of(context).primaryColor,

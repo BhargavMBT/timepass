@@ -1,15 +1,17 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/OtpVerification.dart';
+import 'package:timepass/Authentication/mobileNoAuthScreen.dart';
 import 'package:timepass/Widgets/bottomNavigationWidget.dart';
+import 'package:http/http.dart' as http;
+import '../main.dart';
 
 class AuthService {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  final FacebookAuth facebookAuth = FacebookAuth.instance;
-  final GoogleSignIn googleSignIn = GoogleSignIn();
-  User? userCurrent;
   Future<User?> signInWithGoogle(
     BuildContext context,
   ) async {
@@ -65,13 +67,31 @@ class AuthService {
     }
   }
 
-  Future<User?> signUp(email, password, BuildContext context) async {
+  Future<void> signUp(email, password, BuildContext context) async {
     try {
       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
           email: email, password: password);
-      User? users = userCredential.user;
 
-      return users;
+      User? value = userCredential.user;
+      if (value != null) {
+        // UserCredential cred = await auth.signInWithEmailAndPassword(
+        //     email: email, password: password);
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MobileNumberAuthScreen(
+            email: value.email,
+            imageurl: value.photoURL,
+            name: value.displayName,
+            typeOfSignup: "Email",
+            userid: value.uid,
+            credential: userCredential.credential,
+            password: password,
+          );
+          //   // BottomNavigationBarWidget();
+        }));
+      }
+      // return users;
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case "ERROR_OPERATION_NOT_ALLOWED":
@@ -102,14 +122,32 @@ class AuthService {
     }
   }
 
-  Future<User?> signIn(
+  Future<void> signIn(
       String email, String password, BuildContext context) async {
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
           email: email, password: password);
-      User? user = userCredential.user;
-
-      return user;
+      userCurrent = userCredential.user;
+      if (userCurrent != null) {
+        var url = Uri.parse('$weburl/user/othersignup');
+        var response = await http.post(url, body: {
+          'email': userCurrent!.email,
+        });
+        if (response.statusCode == 200) {
+          var data = jsonDecode(response.body);
+          xAccessToken = data['token'];
+          userid = data["result"]["_id"];
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return BottomNavigationBarWidget();
+          }));
+        } else {
+          errorDialog(context, "Something went wrong.");
+        }
+      } else {
+        errorDialog(context, "Something went wrong.");
+      }
+      // return user;
     } on FirebaseAuthException catch (e) {
       print(e.code);
       switch (e.code) {

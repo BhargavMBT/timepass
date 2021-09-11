@@ -18,29 +18,30 @@ class _OtpVerificationState extends State<OtpVerification> {
   Widget verifyButton(double height, double width) {
     return GestureDetector(
       onTap: () async {
-        final code = otp.trim();
-        AuthCredential credential = PhoneAuthProvider.credential(
-            verificationId: widget.verficationId!, smsCode: code);
-        // getCredential(
-        //     verificationId: widget.verficationId, smsCode: code);
+        // final code = otp.trim();
+        // AuthCredential credential = PhoneAuthProvider.credential(
+        //     verificationId: widget.verficationId!, smsCode: code);
+        // // getCredential(
+        // //     verificationId: widget.verficationId, smsCode: code);
 
-        UserCredential result =
-            await AuthService().auth.signInWithCredential(credential);
+        // UserCredential result =
+        //     await AuthService().auth.signInWithCredential(credential);
 
-        User? user = result.user;
+        // User? user = result.user;
 
-        if (user != null) {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => BottomNavigationBarWidget()));
-        } else {
-          print("Error");
-        }
-        // Navigator.push(context,
-        //     MaterialPageRoute(builder: (BuildContext context) {
-        //   return MobileNumberAuthScreen();
-        // }));
+        // if (user != null) {
+        //   Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => BottomNavigationBarWidget()));
+        // } else {
+        //   print("Error");
+        // }
+
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return BottomNavigationBarWidget();
+        }));
       },
       child: Container(
           margin: EdgeInsets.symmetric(

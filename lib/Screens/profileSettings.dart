@@ -5,6 +5,7 @@ import 'package:timepass/Authentication/SignUpScreen.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/message_screen.dart';
 import 'package:timepass/Widgets/EnabledNotifications.dart';
+import 'package:timepass/main.dart';
 
 class ProfileSettingsScreen extends StatefulWidget {
   const ProfileSettingsScreen({Key? key}) : super(key: key);
@@ -154,15 +155,19 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           divider(height, width),
           GestureDetector(
             onTap: () async {
-              await AuthService().auth.signOut().then((value) async {
+              await auth.signOut().then((value) async {
                 // await AuthService().googleSignIn.signOut();
-                await FacebookAuth.instance.logOut();
+                // await FacebookAuth.instance.logOut();
               }).then((value) {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (BuildContext context) {
                   return SignUpScreen();
                 }));
               });
+              // Navigator.pushReplacement(context,
+              //     MaterialPageRoute(builder: (BuildContext context) {
+              //   return SignUpScreen();
+              // }));
             },
             child: items(
                 height,

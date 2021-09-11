@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:card_swiper/card_swiper.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:eva_icons_flutter/icon_data.dart';
 import 'package:flutter/material.dart';
 import 'package:timepass/Screens/profile_Screen.dart';
 import 'package:timepass/Widgets/moreWidget.dart';
+import 'package:http/http.dart' as http;
+import 'package:timepass/Widgets/progressIndicators.dart';
+import 'package:timepass/models/memesModel.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -27,6 +32,29 @@ class _SearchScreenState extends State<SearchScreen> {
     "assets/images/s7.jpg",
     "assets/images/s8.jpg",
   ];
+
+  Future getMemePosts() async {
+    try {
+      var url = Uri.parse("https://www.reddit.com/r/memes.json");
+      var data = await http.get(url);
+      // var jsonData = json.decode(data.body);
+
+      // List<Posts> posts=[]
+      // for(var u in jsonData['data']['children']){
+      //     if(post.url.contains('.jpg'){
+      //         Posts post = Posts(url: u['data']['url']);
+      //         posts.add(post);
+      //     }
+      // }
+      // print(data.body);
+      return data.body;
+    } catch (e) {
+      print(e.toString());
+
+      // throw Exception("Soemthing went wrong");
+    }
+  }
+
   AppBar appbarOfHOmepage(double height, double width) {
     return AppBar(
       leading:
@@ -112,82 +140,107 @@ class _SearchScreenState extends State<SearchScreen> {
     return Align(
       alignment: Alignment.bottomRight,
       child: Padding(
-        padding: EdgeInsets.only(left: width * 0.04),
-        child: Swiper(
-          outer: false,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              child: Stack(
-                fit: StackFit.loose,
-                children: [
-                  Container(
-                    height: height * 0.7,
-                    width: width,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        '${imageItems[index]}',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: width * 0.02,
-                      top: height * 0.01,
-                    ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(
-                          "assets/images/story1.png",
-                        ),
-                      ),
-                      title: Text(
-                        "first lastname",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Color.fromRGBO(255, 255, 255, 1)),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                        height: height * 0.08,
-                        margin: EdgeInsets.only(
-                          right: width * 0.03,
-                          bottom: 0,
-                        ),
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          height: height * 0.09,
-                          width: width * 0.09,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(
-                              0.4,
+          padding: EdgeInsets.only(left: width * 0.04),
+          child: FutureBuilder(
+              future: getMemePosts(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.hasData) {
+                  var jsonData = jsonDecode(snapshot.data);
+                  List<MemeModel> _posts = [];
+                  for (var u in jsonData['data']['children']) {
+                    if (u["data"]["url"].contains('.jpg') ||
+                        u["data"]["url"].contains('.png') ||
+                        u["data"]["url"].contains('.gif')) {
+                      MemeModel post = MemeModel.fromJson(u['data']['url']);
+                      _posts.add(post);
+                    }
+                  }
+                  return Swiper(
+                    outer: false,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        child: Stack(
+                          fit: StackFit.loose,
+                          children: [
+                            Container(
+                              height: height * 0.7,
+                              width: width,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey[300]!),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Image.network(
+                                  _posts[index].imageurl!,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                             ),
-                          ),
-                          child: Icon(
-                            Icons.share,
-                            size: 15,
-                            color: Color.fromRGBO(255, 255, 255, 1),
-                          ),
-                        )),
-                  ),
-                ],
-              ),
-            );
-          },
-          itemCount: imageItems.length,
-          itemWidth: width * 0.79,
-          duration: 100,
-          viewportFraction: 0.2,
-          itemHeight: height * 0.5,
-          layout: SwiperLayout.STACK,
-        ),
-      ),
+                            Container(
+                              margin: EdgeInsets.only(
+                                left: width * 0.02,
+                                top: height * 0.01,
+                              ),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: AssetImage(
+                                    "assets/images/story1.png",
+                                  ),
+                                ),
+                                title: Text(
+                                  "first lastname",
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color.fromRGBO(255, 255, 255, 1)),
+                                ),
+                              ),
+                            ),
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                  height: height * 0.08,
+                                  margin: EdgeInsets.only(
+                                    right: width * 0.03,
+                                    bottom: 0,
+                                  ),
+                                  alignment: Alignment.centerRight,
+                                  child: Container(
+                                    height: height * 0.09,
+                                    width: width * 0.09,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.black.withOpacity(
+                                        0.4,
+                                      ),
+                                    ),
+                                    child: Icon(
+                                      Icons.share,
+                                      size: 15,
+                                      color: Color.fromRGBO(255, 255, 255, 1),
+                                    ),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    itemCount: imageItems.length,
+                    itemWidth: width * 0.79,
+                    duration: 100,
+                    viewportFraction: 0.2,
+                    itemHeight: height * 0.52,
+                    layout: SwiperLayout.STACK,
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Something went wrong"));
+                } else {
+                  return Center(
+                    child: circularProgressIndicator(),
+                  );
+                }
+              })),
     );
   }
 

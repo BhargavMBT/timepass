@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/Screens/profile_Screen.dart';
 import 'package:timepass/Widgets/moreWidget.dart';
+import 'package:timepass/models/profileModel.dart';
 
 class BackAerrowWidget extends StatelessWidget {
   Widget leadingIcon(double height, double width) {
@@ -84,22 +88,45 @@ AppBar appbarOfHOmepage(double height, double width, BuildContext context) {
             return ProfileScreen();
           }));
         },
-        child: Container(
-            margin: EdgeInsets.only(
-              right: MediaQuery.of(context).size.width * 0.02,
-            ),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue,
-            ),
-            height: MediaQuery.of(context).size.height * 0.07,
-            width: MediaQuery.of(context).size.width * 0.07,
-            child: Image(
-              alignment: Alignment.center,
-              image: AssetImage(
-                "assets/images/profileImage.png",
-              ),
-            )),
+        child: FutureBuilder(
+          future: APIServices().getProfile(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              var jsonData = jsonDecode(snapshot.data);
+              UserProfile user = UserProfile.fromJson(jsonData);
+              return Container(
+                margin: EdgeInsets.only(
+                  right: MediaQuery.of(context).size.width * 0.02,
+                ),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(
+                        user.imageurl!,
+                      ),
+                    )),
+                height: MediaQuery.of(context).size.height * 0.07,
+                width: MediaQuery.of(context).size.width * 0.08,
+              );
+            } else if (snapshot.hasError) {
+              return Container(
+                  margin: EdgeInsets.only(
+                    right: MediaQuery.of(context).size.width * 0.02,
+                  ),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.blue,
+                  ),
+                  height: MediaQuery.of(context).size.height * 0.07,
+                  width: MediaQuery.of(context).size.width * 0.07,
+                  child: Icon(Icons.error));
+            } else {
+              return Container();
+            }
+          },
+        ),
       ),
     ],
     elevation: 0,

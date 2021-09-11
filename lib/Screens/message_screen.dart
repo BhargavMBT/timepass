@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:bubble/bubble.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+
+
   Widget receiverSection(
     double height,
     double width,

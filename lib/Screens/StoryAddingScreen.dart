@@ -1,9 +1,16 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:timepass/API/BasicAPI.dart';
+import 'package:timepass/Authentication/authServices.dart';
+import 'package:timepass/Screens/PostAddScreen.dart';
 import 'package:timepass/Screens/message_screen.dart';
+import 'package:timepass/main.dart';
+import 'package:http/http.dart' as http;
 
 class StoryAdding extends StatefulWidget {
   const StoryAdding({Key? key}) : super(key: key);
@@ -13,6 +20,7 @@ class StoryAdding extends StatefulWidget {
 }
 
 class _StoryAddingState extends State<StoryAdding> {
+  TextEditingController captionController = TextEditingController();
   File? file;
 
   void cameraOpenforImage() async {
@@ -48,6 +56,67 @@ class _StoryAddingState extends State<StoryAdding> {
         trailing: icon2,
       ),
     );
+  }
+
+  makeImageUrl() async {
+    UploadTask storageTak = storage
+        .child(
+            'Users/profile_img_${userid}_${DateTime.now().toIso8601String().toString()}')
+        .putFile(file!);
+    TaskSnapshot taskSnapshot = await storageTak.whenComplete(() {});
+    String downLoadUrl = await taskSnapshot.ref.getDownloadURL();
+    return downLoadUrl;
+  }
+
+  Future postFuction() async {
+    setState(() {
+      loading = true;
+    });
+    try {
+      if (file != null) {
+        String imageurl = await makeImageUrl();
+        var url = Uri.parse('$weburl/posts/new');
+
+        var response = await http.post(url, body: {
+          "post": imageurl,
+          "body": captionController.text.isEmpty ? "" : captionController.text,
+        }, headers: {
+          'x-access-token': xAccessToken!,
+        });
+
+        if (response.statusCode == 200) {
+          setState(() {
+            loading = false;
+            file = null;
+            captionController.clear();
+          });
+        } else {
+          setState(() {
+            loading = false;
+            file = null;
+            captionController.clear();
+          });
+          // AuthService().errorDialog(
+          //   context,
+          //   "Oops! Something went wrong",
+          // );
+        }
+      } else {
+        AuthService().errorDialog(
+          context,
+          "Please select a post.",
+        );
+      }
+    } catch (e) {
+      setState(() {
+        loading = false;
+      });
+      AuthService().errorDialog(context, "Something went wrong!");
+    } finally {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   Future mediaPickerDialog(double height, double width) {
@@ -144,7 +213,7 @@ class _StoryAddingState extends State<StoryAdding> {
               )),
           Switch(
             overlayColor: MaterialStateProperty.all(Colors.black),
-            value: true,
+            value: false,
             onChanged: (value) {},
             activeColor: Colors.black,
             trackColor: MaterialStateProperty.all(Colors.grey[400]),
@@ -154,21 +223,24 @@ class _StoryAddingState extends State<StoryAdding> {
     );
   }
 
+  bool loading = false;
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
-        leading: GestureDetector(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: backAerrowButton(height, width),
-        ),
+        automaticallyImplyLeading: false,
+        // leading: GestureDetector(
+        //   onTap: () {
+        //     Navigator.pop(context);
+        //   },
+        //   child: backAerrowButton(height, width),
+        // ),
         title: Text(
           "New Post",
           style: TextStyle(
@@ -181,6 +253,20 @@ class _StoryAddingState extends State<StoryAdding> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              loading
+                  ? SizedBox(
+                      height: height * 0.01,
+                    )
+                  : Container(),
+              loading
+                  ? LinearProgressIndicator(
+                      minHeight: height * 0.005,
+                      backgroundColor: Colors.blue,
+                      valueColor: AlwaysStoppedAnimation(
+                        Colors.black,
+                      ),
+                    )
+                  : Container(),
               postanonymous(height, width),
               Container(
                 margin: EdgeInsets.only(
@@ -276,7 +362,7 @@ class _StoryAddingState extends State<StoryAdding> {
               ),
               Container(
                 margin:
-                    EdgeInsets.only(bottom: height * 0.02, top: height * 0.31),
+                    EdgeInsets.only(bottom: height * 0.02, top: height * 0.04),
                 alignment: Alignment.bottomCenter,
                 child: ElevatedButton(
                   style: ButtonStyle(
@@ -297,7 +383,7 @@ class _StoryAddingState extends State<StoryAdding> {
                           1,
                         ),
                       )),
-                  onPressed: null,
+                  onPressed: postFuction,
                   child: Text(
                     "Post",
                     style: TextStyle(

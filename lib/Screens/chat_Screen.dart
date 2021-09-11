@@ -1,9 +1,12 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Screens/CreateGroup.dart';
 import 'package:timepass/Screens/message_screen.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
+import 'package:timepass/main.dart';
+import 'package:http/http.dart' as http;
 
 enum SelectTab { Chat, Groups }
 
@@ -15,7 +18,22 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  TextEditingController searchController = TextEditingController();
   SelectTab selectTab = SelectTab.Chat;
+
+  late FocusNode focusNode;
+
+  @override
+  void initState() {
+    focusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    focusNode.dispose();
+    super.dispose();
+  }
 
   Widget chatSections(
       double height,
@@ -101,6 +119,31 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
       ),
     );
+  }
+
+  Future searchUsers(String query) async {
+    try {
+      var url = Uri.parse('$weburl/users/search?name=Milind');
+      var response;
+      if (xAccessToken != null) {
+        response = await http.get(
+          url,
+        );
+          print(response.body);
+          print(response.statusCode);
+        if (response.statusCode == 200) {
+          print(response.body);
+          return response.body;
+        } else {
+          throw Exception("Oops! Something went wrong");
+        }
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception("Oops! Something went wrong");
+    }
   }
 
   Widget chatUsers(double height, double width) {
@@ -190,6 +233,173 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Widget searchSection(double height, double width) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: width * 0.08,
+        vertical: height * 0.008,
+      ),
+      height: height * 0.065,
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 0.05,
+          color: Color.fromRGBO(112, 112, 112, 0.25),
+        ),
+        color: Color.fromRGBO(255, 255, 255, 1),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 25,
+            spreadRadius: 0,
+            offset: Offset(7, 17),
+            color: Color.fromRGBO(112, 112, 112, 0.25),
+          ),
+        ],
+        borderRadius: BorderRadius.circular(24),
+      ),
+      alignment: Alignment.center,
+      child: TextFormField(
+        controller: searchController,
+        focusNode: focusNode,
+        cursorColor: Colors.black,
+        onFieldSubmitted: (String? value) {
+          if (value != null) {
+            searchUsers(value);
+          }
+        },
+        onChanged: (String? value) {},
+        decoration: InputDecoration(
+          prefixIcon: Icon(
+            EvaIcons.searchOutline,
+            color: Colors.black,
+          ),
+          hintText: "Search for chats",
+          hintStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Color.fromRGBO(150, 150, 150, 1),
+          ),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget sectionOfChatting(double height, double width) {
+    return Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color.fromRGBO(48, 48, 48, 1),
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(27),
+            topRight: Radius.circular(27),
+          ),
+        ),
+        child: SingleChildScrollView(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+            Container(
+              alignment: Alignment.center,
+              height: height * 0.045,
+              width: width * 0.550,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                      color: Color.fromRGBO(0, 0, 0, 0.25),
+                      offset: Offset(0, 2),
+                      blurRadius: 15,
+                      spreadRadius: 0)
+                ],
+                borderRadius: BorderRadius.circular(25),
+              ),
+              margin: EdgeInsets.symmetric(
+                  horizontal: width * 0.225, vertical: height * 0.02),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectTab = SelectTab.Chat;
+                      });
+                    },
+                    child: Container(
+                        alignment: Alignment.center,
+                        height: height * 0.045,
+                        width: width * 0.275,
+                        child: Text(
+                          "Chats",
+                          style: TextStyle(
+                            color: selectTab == SelectTab.Chat
+                                ? Colors.white
+                                : Colors.black,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        decoration: selectTab == SelectTab.Chat
+                            ? BoxDecoration(
+                                gradient: LinearGradient(colors: [
+                                  Color.fromRGBO(38, 203, 255, 1),
+                                  Color.fromRGBO(105, 128, 253, 0.5),
+                                ]),
+                                color: Color.fromRGBO(159, 159, 159, 1),
+                                borderRadius: BorderRadius.circular(25),
+                              )
+                            : BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(25),
+                              )),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectTab = SelectTab.Groups;
+                      });
+                    },
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: height * 0.045,
+                      width: width * 0.275,
+                      decoration: selectTab == SelectTab.Groups
+                          ? BoxDecoration(
+                              gradient: LinearGradient(colors: [
+                                Color.fromRGBO(38, 203, 255, 1),
+                                Color.fromRGBO(105, 128, 253, 0.5),
+                              ]),
+                              color: Color.fromRGBO(159, 159, 159, 1),
+                              borderRadius: BorderRadius.circular(25),
+                            )
+                          : BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                      child: Text(
+                        "Groups",
+                        style: TextStyle(
+                          color: selectTab == SelectTab.Groups
+                              ? Colors.white
+                              : Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: height * 0.01,
+            ),
+            selectTab == SelectTab.Chat
+                ? chatUsers(height, width)
+                : groupChats(height, width),
+          ]),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -238,168 +448,76 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
       body: Column(
         children: [
-          Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: width * 0.08,
-              vertical: height * 0.008,
-            ),
-            height: height * 0.065,
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 0.05,
-                color: Color.fromRGBO(112, 112, 112, 0.25),
-              ),
-              color: Color.fromRGBO(255, 255, 255, 1),
-              boxShadow: [
-                BoxShadow(
-                  blurRadius: 25,
-                  spreadRadius: 0,
-                  offset: Offset(7, 17),
-                  color: Color.fromRGBO(112, 112, 112, 0.25),
-                ),
-              ],
-              borderRadius: BorderRadius.circular(24),
-            ),
-            alignment: Alignment.center,
-            child: TextFormField(
-              cursorColor: Colors.black,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  EvaIcons.searchOutline,
-                  color: Colors.black,
-                ),
-                hintText: "Search for chats",
-                hintStyle: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color.fromRGBO(150, 150, 150, 1),
-                ),
-                border: InputBorder.none,
-              ),
-            ),
-          ),
+          searchSection(height, width),
           SizedBox(
             height: height * 0.02,
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color.fromRGBO(48, 48, 48, 1),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(27),
-                  topRight: Radius.circular(27),
-                ),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        height: height * 0.045,
-                        width: width * 0.550,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                                color: Color.fromRGBO(0, 0, 0, 0.25),
-                                offset: Offset(0, 2),
-                                blurRadius: 15,
-                                spreadRadius: 0)
-                          ],
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        margin: EdgeInsets.symmetric(
-                            horizontal: width * 0.225, vertical: height * 0.02),
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectTab = SelectTab.Chat;
-                                });
-                              },
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  height: height * 0.045,
-                                  width: width * 0.275,
-                                  child: Text(
-                                    "Chats",
-                                    style: TextStyle(
-                                      color: selectTab == SelectTab.Chat
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  decoration: selectTab == SelectTab.Chat
-                                      ? BoxDecoration(
-                                          gradient: LinearGradient(colors: [
-                                            Color.fromRGBO(38, 203, 255, 1),
-                                            Color.fromRGBO(105, 128, 253, 0.5),
-                                          ]),
-                                          color:
-                                              Color.fromRGBO(159, 159, 159, 1),
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                        )
-                                      : BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                        )),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectTab = SelectTab.Groups;
-                                });
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                height: height * 0.045,
-                                width: width * 0.275,
-                                decoration: selectTab == SelectTab.Groups
-                                    ? BoxDecoration(
-                                        gradient: LinearGradient(colors: [
-                                          Color.fromRGBO(38, 203, 255, 1),
-                                          Color.fromRGBO(105, 128, 253, 0.5),
-                                        ]),
-                                        color: Color.fromRGBO(159, 159, 159, 1),
-                                        borderRadius: BorderRadius.circular(25),
-                                      )
-                                    : BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                child: Text(
-                                  "Groups",
-                                  style: TextStyle(
-                                    color: selectTab == SelectTab.Groups
-                                        ? Colors.white
-                                        : Colors.black,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      selectTab == SelectTab.Chat
-                          ? chatUsers(height, width)
-                          : groupChats(height, width),
-                    ]),
-              ),
-            ),
-          ),
+          sectionOfChatting(height, width),
+          // KeyboardVisibilityBuilder(builder: (context, child, visible) {
+          //   if (!visible) {
+          //     return sectionOfChatting(height, width);
+          //   } else {
+          //     return Container(
+          //       color: Theme.of(context).primaryColor,
+          //     );
+          //   }
+          // }),
         ],
       ),
     );
   }
+}
+
+class KeyboardVisibilityBuilder extends StatefulWidget {
+  final Widget? child;
+  final Widget Function(
+    BuildContext context,
+    Widget? child,
+    bool isKeyboardVisible,
+  ) builder;
+
+  const KeyboardVisibilityBuilder({
+    Key? key,
+    this.child,
+    required this.builder,
+  }) : super(key: key);
+
+  @override
+  _KeyboardVisibilityBuilderState createState() =>
+      _KeyboardVisibilityBuilderState();
+}
+
+class _KeyboardVisibilityBuilderState extends State<KeyboardVisibilityBuilder>
+    with WidgetsBindingObserver {
+  var _isKeyboardVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    final bottomInset = WidgetsBinding.instance!.window.viewInsets.bottom;
+    final newValue = bottomInset > 0.0;
+    if (newValue != _isKeyboardVisible) {
+      setState(() {
+        _isKeyboardVisible = newValue;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(
+        context,
+        widget.child,
+        _isKeyboardVisible,
+      );
 }

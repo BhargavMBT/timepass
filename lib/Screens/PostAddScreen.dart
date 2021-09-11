@@ -1,17 +1,24 @@
 import 'dart:io';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:photofilters/filters/subfilters.dart';
+import 'package:timepass/API/BasicAPI.dart';
+import 'package:timepass/Authentication/authServices.dart';
 
 import 'dart:ui' as ui;
 import 'package:timepass/Screens/SelectedpostScreen.dart';
 import 'package:timepass/Screens/message_screen.dart';
+import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/filtersData/filterColorData.dart';
+import 'package:timepass/main.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class PostAddScreen extends StatefulWidget {
   const PostAddScreen({Key? key}) : super(key: key);
@@ -43,6 +50,23 @@ class _PostAddScreenState extends State<PostAddScreen> {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
         return CustomeFilterScreen(
+          file: File(imageFile.path),
+        );
+        // SelectedPostScreen(
+        //   file: File(imageFile.path),
+        // );
+      }));
+    }
+  }
+
+  void galleryForVideoOpen() async {
+    Navigator.pop(context);
+    XFile? imageFile =
+        await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (imageFile != null) {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return StoryVideoSelected(
           file: File(imageFile.path),
         );
         // SelectedPostScreen(
@@ -138,7 +162,7 @@ class _PostAddScreenState extends State<PostAddScreen> {
                       EvaIcons.chevronRight,
                       color: Colors.black87,
                     ),
-                    null),
+                    galleryForVideoOpen),
               ],
             ),
           );
@@ -305,6 +329,72 @@ class FinalScreen extends StatefulWidget {
 }
 
 class _FinalScreenState extends State<FinalScreen> {
+  bool isloading = false;
+  makeImageUrl() async {
+    final tempDir = await getTemporaryDirectory();
+    final File files = await new File('${tempDir.path}/image.jpg').create();
+    files.writeAsBytesSync(widget.imageData!);
+    UploadTask storageTak = storage
+        .child(
+            'Users/Stories${userid}_${DateTime.now().toIso8601String().toString()}')
+        .putFile(files);
+    TaskSnapshot taskSnapshot = await storageTak.whenComplete(() {});
+    String downLoadUrl = await taskSnapshot.ref.getDownloadURL();
+    return downLoadUrl;
+  }
+
+  Future postaStory() async {
+    setState(() {
+      isloading = true;
+    });
+    try {
+      var url = Uri.parse('$weburl/stories/new');
+      String imageUrl = await makeImageUrl();
+      var response = await http.post(url, body: {
+        "story": imageUrl,
+        "type": "Image",
+      }, headers: {
+        'x-access-token': xAccessToken!,
+      });
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Story added successfully!"),
+          ),
+        );
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MyApp();
+        }));
+      } else if (response.statusCode == 201) {
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Story added successfully!"),
+          ),
+        );
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MyApp();
+        }));
+      } else {
+        setState(() {
+          isloading = false;
+        });
+        AuthService().errorDialog(context, "Something went wrong.");
+      }
+    } catch (e) {
+      print(e.toString());
+      AuthService().errorDialog(context, "Something went wrong.!");
+    } finally {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -338,12 +428,51 @@ class _FinalScreenState extends State<FinalScreen> {
         ),
       ),
       body: Container(
-        color: Colors.red,
+        color: Colors.white,
         height: height,
         width: width,
-        child: Image.memory(
-          widget.imageData!,
-          fit: BoxFit.cover,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.memory(
+              widget.imageData!,
+              fit: BoxFit.cover,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: EdgeInsets.only(
+                  bottom: height * 0.03,
+                ),
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        padding: MaterialStateProperty.all(EdgeInsets.only(
+                          left: width * 0.06,
+                          right: width * 0.06,
+                          top: height * 0.015,
+                          bottom: height * 0.015,
+                        )),
+                        alignment: Alignment.center,
+                        backgroundColor: MaterialStateProperty.all(
+                          Theme.of(context).accentColor.withOpacity(0.4),
+                        )),
+                    onPressed: postaStory,
+                    child: Text(
+                      "Add a story",
+                    )),
+              ),
+            ),
+            isloading
+                ? Center(
+                    child: circularProgressIndicator(),
+                  )
+                : Container(),
+          ],
         ),
       ),
     );

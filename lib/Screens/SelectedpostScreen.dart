@@ -1,19 +1,29 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:chewie/chewie.dart';
+import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofilters/photofilters.dart';
 import 'package:photofilters/widgets/photo_filter.dart';
+import 'package:timepass/API/BasicAPI.dart';
+import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/PostData.dart';
 import 'package:timepass/Screens/message_screen.dart';
 import 'package:image/image.dart' as imageLib;
 import 'package:path/path.dart';
+import 'package:timepass/Widgets/progressIndicators.dart';
+import 'package:timepass/main.dart';
+import 'package:video_player/video_player.dart';
+import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class SelectedPostScreen extends StatefulWidget {
   File? file;
-  SelectedPostScreen({Key? key, this.file})
+  String? type;
+  SelectedPostScreen({Key? key, this.file, this.type})
       : super(
           key: key,
         );
@@ -216,5 +226,189 @@ class _SelectedPostScreenState extends State<SelectedPostScreen> {
         ],
       ),
     );
+  }
+}
+
+class StoryVideoSelected extends StatefulWidget {
+  final File? file;
+  StoryVideoSelected({this.file});
+
+  @override
+  _StoryVideoSelectedState createState() => _StoryVideoSelectedState();
+}
+
+class _StoryVideoSelectedState extends State<StoryVideoSelected> {
+  late VideoPlayerController videoPlayerController;
+  late ChewieController chewieController;
+  @override
+  void initState() {
+    initialize();
+
+    super.initState();
+  }
+
+  Future initialize() async {
+    videoPlayerController = VideoPlayerController.file(widget.file!);
+    // await videoPlayerController.initialize();
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      aspectRatio: 1,
+      allowFullScreen: false,
+      showControls: true,
+      looping: false,
+      placeholder: Center(
+        child: circularProgressIndicator(),
+      ),
+    );
+  }
+
+  makeImageUrl() async {
+    UploadTask storageTak = storage
+        .child(
+            'Users/Stories${userid}_${DateTime.now().toIso8601String().toString()}')
+        .putFile(widget.file!);
+    TaskSnapshot taskSnapshot = await storageTak.whenComplete(() {});
+    String downLoadUrl = await taskSnapshot.ref.getDownloadURL();
+    return downLoadUrl;
+  }
+
+  Future postaStory(BuildContext context) async {
+    setState(() {
+      isloading = true;
+    });
+    try {
+      var url = Uri.parse('$weburl/stories/new');
+      String imageUrl = await makeImageUrl();
+      var response = await http.post(url, body: {
+        "story": imageUrl,
+        "type": "Video",
+      }, headers: {
+        'x-access-token': xAccessToken!,
+      });
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Story added successfully!"),
+          ),
+        );
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MyApp();
+        }));
+      } else if (response.statusCode == 201) {
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Story added successfully!"),
+          ),
+        );
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (BuildContext context) {
+          return MyApp();
+        }));
+      } else {
+        setState(() {
+          isloading = false;
+        });
+        AuthService().errorDialog(context, "Something went wrong.");
+      }
+    } catch (e) {
+      print(e.toString());
+      AuthService().errorDialog(context, "Something went wrong.!");
+    } finally {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
+  bool isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: backAerrowButton(height, width),
+          ),
+          actions: [
+            IconButton(
+                onPressed: null,
+                icon: Icon(
+                  EvaIcons.music,
+                  color: Colors.black,
+                )),
+          ],
+          title: Text(
+            "Selected video",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: Chewie(
+                      controller: chewieController,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    margin: EdgeInsets.only(
+                      bottom: height * 0.03,
+                    ),
+                    child: ElevatedButton(
+                        style: ButtonStyle(
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            padding: MaterialStateProperty.all(EdgeInsets.only(
+                              left: width * 0.06,
+                              right: width * 0.06,
+                              top: height * 0.015,
+                              bottom: height * 0.015,
+                            )),
+                            alignment: Alignment.center,
+                            backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context).accentColor.withOpacity(1),
+                            )),
+                        onPressed: () {
+                          postaStory(context);
+                        },
+                        child: Text(
+                          "Add a story",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ),
+                ),
+              ],
+            ),
+            isloading
+                ? Center(
+                    child: circularProgressIndicator(),
+                  )
+                : Container(),
+          ],
+        ));
   }
 }

@@ -1,18 +1,30 @@
+import 'dart:convert';
+
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipecards/flutter_swipecards.dart';
+import 'package:timepass/API/APIservices.dart';
+import 'package:timepass/API/BasicAPI.dart';
+import 'package:timepass/Authentication/authServices.dart';
+import 'package:timepass/Screens/PostAddScreen.dart';
 import 'package:timepass/Screens/StoryAddingScreen.dart';
 import 'package:timepass/Screens/participateScreen.dart';
 
 import 'package:timepass/Screens/profile_Screen.dart';
 import 'package:timepass/Screens/storiesScreen.dart';
+import 'package:timepass/Screens/yourStoriesScreen.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Utils/textStyles.dart';
 import 'package:timepass/Utils/textTitleWidgets.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
 import 'package:timepass/Widgets/drawerWidget.dart';
 import 'package:timepass/Widgets/moreWidget.dart';
+import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/Widgets/title_Widget.dart';
+import 'package:http/http.dart' as http;
+import 'package:timepass/main.dart';
+import 'package:timepass/models/memesModel.dart';
+import 'package:timepass/models/profileModel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -36,6 +48,40 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     "assets/images/s7.jpg",
     "assets/images/s8.jpg",
   ];
+
+  Future getMemes() async {
+    try {
+      var url = Uri.parse(memeUrl);
+      var response;
+      // if (xAccessToken != null) {
+
+      // }
+      response = await http.get(
+        url,
+      );
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw Exception("Something went wrong");
+      }
+    } catch (e) {
+      throw Exception("Something went wrong");
+    }
+  }
+
+  Future getpostSocioWallAPI() async {
+    try {
+      var url = Uri.parse(socioWallUrl);
+      var data = await http.get(url);
+
+      return data.body;
+    } catch (e) {
+      print(e.toString());
+
+      // throw Exception("Soemthing went wrong");
+    }
+  }
+
   Widget contestes(double height, double width, String title, String image,
       String buttontitle, String imageleading, Function fun) {
     return Container(
@@ -145,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   );
 
   Widget storyContainer(
-      double height, double width, String image, String name) {
+      double height, double width, String image, String name, bool yourstory) {
     return Container(
       margin: EdgeInsets.only(right: width * 0.045),
       child: Column(
@@ -157,19 +203,57 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 padding: const EdgeInsets.all(3.2), //width of the border
                 child: ClipOval(
                   clipBehavior: Clip.antiAlias,
-                  child: Container(
-                    height: height * 0.08,
-                    width: width * 0.15,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                            image,
+                  child: yourstory
+                      ? FutureBuilder(
+                          future: APIServices().getProfile(),
+                          builder:
+                              (BuildContext context, AsyncSnapshot snapshot) {
+                            if (snapshot.hasData) {
+                              var jsonData = jsonDecode(snapshot.data);
+                              UserProfile user = UserProfile.fromJson(jsonData);
+                              return Container(
+                                height: height * 0.08,
+                                width: width * 0.15,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                        user.imageurl!,
+                                      ),
+                                      fit: BoxFit.fill),
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(32),
+                                ),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Container(
+                                height: height * 0.08,
+                                width: width * 0.15,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(32),
+                                ),
+                                child: Icon(
+                                  Icons.error,
+                                ),
+                              );
+                            } else {
+                              return Container(
+                                  height: height * 0.08,
+                                  width: width * 0.15,
+                                  color: Theme.of(context).primaryColor);
+                            }
+                          },
+                        )
+                      : Container(
+                          height: height * 0.08,
+                          width: width * 0.15,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage(image), fit: BoxFit.fill),
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(32),
                           ),
-                          fit: BoxFit.fill),
-                      color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(32),
-                    ),
-                  ),
+                        ),
                 ),
               ),
               decoration: BoxDecoration(
@@ -209,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 onTap: () {
                   Navigator.push(context,
                       MaterialPageRoute(builder: (BuildContext context) {
-                    return StoryAdding();
+                    return YourStories();
                   }));
                 },
                 child: storyContainer(
@@ -217,6 +301,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                   width,
                   "assets/images/yourstory.png",
                   "Your story",
+                  true,
                 ),
               ),
               GestureDetector(
@@ -226,31 +311,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     return StoriesScreen();
                   }));
                 },
-                child: storyContainer(
-                  height,
-                  width,
-                  "assets/images/story1.png",
-                  "HypeSun_98",
-                ),
+                child: storyContainer(height, width, "assets/images/story1.png",
+                    "HypeSun_98", false),
               ),
+              storyContainer(height, width, "assets/images/story2.png",
+                  "KarolBary", false),
               storyContainer(
-                height,
-                width,
-                "assets/images/story2.png",
-                "KarolBary",
-              ),
+                  height, width, "assets/images/story3.png", "Waggles", false),
               storyContainer(
-                height,
-                width,
-                "assets/images/story3.png",
-                "Waggles",
-              ),
-              storyContainer(
-                height,
-                width,
-                "assets/images/yourstory.png",
-                "XYZ",
-              )
+                  height, width, "assets/images/yourstory.png", "XYZ", false)
             ],
           )),
     );
@@ -261,79 +330,118 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       alignment: Alignment.bottomRight,
       child: Padding(
         padding: EdgeInsets.only(left: width * 0.04),
-        child: Swiper(
-          outer: false,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              child: Stack(
-                fit: StackFit.loose,
-                children: [
-                  Container(
-                    height: height * 0.7,
-                    width: width,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset(
-                        '${imageItems[index]}',
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: width * 0.02,
-                      top: height * 0.01,
-                    ),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        backgroundImage: AssetImage(
-                          "assets/images/story1.png",
-                        ),
-                      ),
-                      title: Text(
-                        "first lastname",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Color.fromRGBO(255, 255, 255, 1)),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Container(
-                        height: height * 0.08,
-                        margin: EdgeInsets.only(
-                          right: width * 0.03,
-                          bottom: 0,
-                        ),
-                        alignment: Alignment.centerRight,
-                        child: Container(
-                          height: height * 0.09,
-                          width: width * 0.09,
-                          alignment: Alignment.center,
+        child: FutureBuilder(
+          // future: getMemes(),
+          // future: getMemePosts(),
+          future: getpostSocioWallAPI(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              var jsonData = jsonDecode(snapshot.data)['data']['posts'];
+              List<MemeModel> _posts = [];
+              jsonData.forEach((element) {
+                MemeModel post = MemeModel.fromJson(element["imagelink"]);
+                _posts.add(post);
+              });
+              // // for (var u in jsonData['data']['children']) {
+              // //   if (u["data"]["url"].contains('.jpg') ||
+              // //       u["data"]["url"].contains('.png') ||
+              // //       u["data"]["url"].contains('.gif')) {
+              // //     MemeModel post = MemeModel.fromJson(u['data']['url']);
+              // //     _posts.add(post);
+              // //   }
+              // // }
+              // var data = jsonDecode(snapshot.data)["data"]["memes"];
+
+              // List<MemeModel> _posts = [];
+              // data.forEach((element) {
+              //   MemeModel model = MemeModel.fromJson(element["url"]);
+              //   _posts.add(model);
+              // });
+              return Swiper(
+                outer: false,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    child: Stack(
+                      fit: StackFit.loose,
+                      children: [
+                        Container(
+                          height: height * 0.7,
+                          width: width,
                           decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(
-                              0.4,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              // _list[index].imageurl!,
+                              _posts[index].imageurl!,
+                              fit: BoxFit.fill,
                             ),
                           ),
-                          child: Icon(
-                            Icons.share,
-                            size: 15,
-                            color: Color.fromRGBO(255, 255, 255, 1),
+                        ),
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: width * 0.02,
+                            top: height * 0.01,
                           ),
-                        )),
-                  ),
-                ],
-              ),
-            );
+                          child: ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: AssetImage(
+                                "assets/images/story1.png",
+                              ),
+                            ),
+                            title: Text(
+                              "first lastname",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color.fromRGBO(255, 255, 255, 1)),
+                            ),
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                              height: height * 0.08,
+                              margin: EdgeInsets.only(
+                                right: width * 0.03,
+                                bottom: 0,
+                              ),
+                              alignment: Alignment.centerRight,
+                              child: Container(
+                                height: height * 0.09,
+                                width: width * 0.09,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black.withOpacity(
+                                    0.4,
+                                  ),
+                                ),
+                                child: Icon(
+                                  Icons.share,
+                                  size: 15,
+                                  color: Color.fromRGBO(255, 255, 255, 1),
+                                ),
+                              )),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                itemCount: _posts.length,
+                itemWidth: width * 0.79,
+                duration: 100,
+                viewportFraction: 0.2,
+                itemHeight: height * 0.56,
+                layout: SwiperLayout.STACK,
+              );
+            } else if (snapshot.hasError) {
+              return Center(child: Text("Something went wrong"));
+            } else {
+              return Center(child: circularProgressIndicator());
+            }
           },
-          itemCount: imageItems.length,
-          itemWidth: width * 0.79,
-          duration: 100,
-          viewportFraction: 0.2,
-          itemHeight: height * 0.56,
-          layout: SwiperLayout.STACK,
         ),
       ),
     );
