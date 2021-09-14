@@ -45,6 +45,8 @@ dependencies:
   flutter_cache_manager: ^3.1.2
   cached_network_image: ^3.1.0
   chewie: ^1.2.2
+  story_creator: ^1.0.0
+  
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -68,30 +70,30 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - Assets/Images/
-    - Assets/Images/profileImage2.png
-    - Assets/Images/sampleImage2.png
-    - Assets/Images/goldenIcon.png
-    - Assets/Images/sampleImage.png
-    - Assets/Images/leadingIcon.png
-    - Assets/Images/profileImage.png
-    - Assets/Images/gameIcon.png
-    - Assets/Images/emojiIcon.png
-    - Assets/Images/Ellipse 7.png
-    - Assets/Images/Ellipse 8.png
-    - Assets/Images/Ellipse 9.png
-    - Assets/Images/Ellipse 10.png
-    - Assets/Images/Ellipse 11.png
-    - Assets/Images/socioClub2x.png
-    - Assets/Images/story1.png
-    - Assets/Images/story2.png
-    - Assets/Images/story3.png
-    - Assets/Images/swipeImage.png
-    - Assets/Images/trophy.png
-    - Assets/Images/yourstory.png
-    - Assets/Images/pubg.png
-    - Assets/Images/cod.png
-    - Assets/Images/contest1.png
-    - Assets/Images/contest2.png
+    # - Assets/Images/profileImage2.png
+    # - Assets/Images/sampleImage2.png
+    # - Assets/Images/goldenIcon.png
+    # - Assets/Images/sampleImage.png
+    # - Assets/Images/leadingIcon.png
+    # - Assets/Images/profileImage.png
+    # - Assets/Images/gameIcon.png
+    # - Assets/Images/emojiIcon.png
+    # - Assets/Images/Ellipse 7.png
+    # - Assets/Images/Ellipse 8.png
+    # - Assets/Images/Ellipse 9.png
+    # - Assets/Images/Ellipse 10.png
+    # - Assets/Images/Ellipse 11.png
+    # - Assets/Images/socioClub2x.png
+    # - Assets/Images/story1.png
+    # - Assets/Images/story2.png
+    # - Assets/Images/story3.png
+    # - Assets/Images/swipeImage.png
+    # - Assets/Images/trophy.png
+    # - Assets/Images/yourstory.png
+    # - Assets/Images/pubg.png
+    # - Assets/Images/cod.png
+    # - Assets/Images/contest1.png
+    # - Assets/Images/contest2.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

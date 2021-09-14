@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:chewie/chewie.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,10 @@ import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/PostAddScreen.dart';
 import 'package:timepass/Screens/message_screen.dart';
+import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:video_player/video_player.dart';
 
 class StoryAdding extends StatefulWidget {
   const StoryAdding({Key? key}) : super(key: key);
@@ -22,13 +25,14 @@ class StoryAdding extends StatefulWidget {
 class _StoryAddingState extends State<StoryAdding> {
   TextEditingController captionController = TextEditingController();
   File? file;
-
+  String? typeOfPost;
   void cameraOpenforImage() async {
     Navigator.pop(context);
     XFile? imageFile =
         await ImagePicker().pickImage(source: ImageSource.camera);
     if (imageFile != null) {
       setState(() {
+        typeOfPost = "Image";
         file = File(imageFile.path);
       });
     }
@@ -40,6 +44,7 @@ class _StoryAddingState extends State<StoryAdding> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (imageFile != null) {
       setState(() {
+        typeOfPost = "Image";
         file = File(imageFile.path);
       });
     }
@@ -80,6 +85,7 @@ class _StoryAddingState extends State<StoryAdding> {
         var response = await http.post(url, body: {
           "post": imageurl,
           "body": captionController.text.isEmpty ? "" : captionController.text,
+          "type": typeOfPost,
         }, headers: {
           'x-access-token': xAccessToken!,
         });
@@ -119,6 +125,30 @@ class _StoryAddingState extends State<StoryAdding> {
     }
   }
 
+  void galleryForVideoOpen() async {
+    Navigator.pop(context);
+    XFile? imageFile =
+        await ImagePicker().pickVideo(source: ImageSource.gallery);
+    if (imageFile != null) {
+      setState(() {
+        typeOfPost = "Video";
+        file = File(imageFile.path);
+      });
+    }
+  }
+
+  void cameraForVideoOpen() async {
+    Navigator.pop(context);
+    XFile? imageFile =
+        await ImagePicker().pickVideo(source: ImageSource.camera);
+    if (imageFile != null) {
+      setState(() {
+        typeOfPost = "Video";
+        file = File(imageFile.path);
+      });
+    }
+  }
+
   Future mediaPickerDialog(double height, double width) {
     return showDialog(
         context: context,
@@ -140,13 +170,12 @@ class _StoryAddingState extends State<StoryAdding> {
                   ),
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "Select an image",
+                    "Select an file",
                     style: TextStyle(
                       color: Colors.grey[900],
                     ),
                   ),
                 ),
-
                 itemsofmedia(
                   Icon(
                     EvaIcons.camera,
@@ -171,28 +200,29 @@ class _StoryAddingState extends State<StoryAdding> {
                   ),
                   galleryForImageOpen,
                 ),
-                // itemsofmedia(
-                //     Icon(
-                //       EvaIcons.video,
-                //       color: Colors.black87,
-                //     ),
-                //     'Record video',
-                //     Icon(
-                //       EvaIcons.chevronRight,
-                //       color: Colors.black87,
-                //     ),
-                //     null),
-                // itemsofmedia(
-                //     Icon(
-                //       EvaIcons.videoOutline,
-                //       color: Colors.black87,
-                //     ),
-                //     'Video Gallery',
-                //     Icon(
-                //       EvaIcons.chevronRight,
-                //       color: Colors.black87,
-                //     ),
-                //     null),
+                itemsofmedia(
+                    Icon(
+                      EvaIcons.video,
+                      color: Colors.black87,
+                    ),
+                    'Record video',
+                    Icon(
+                      EvaIcons.chevronRight,
+                      color: Colors.black87,
+                    ),
+                    cameraForVideoOpen),
+                itemsofmedia(
+                  Icon(
+                    EvaIcons.videoOutline,
+                    color: Colors.black87,
+                  ),
+                  'Video Gallery',
+                  Icon(
+                    EvaIcons.chevronRight,
+                    color: Colors.black87,
+                  ),
+                  galleryForVideoOpen,
+                ),
               ]),
             ),
           );
@@ -309,35 +339,111 @@ class _StoryAddingState extends State<StoryAdding> {
                                     ),
                                   ),
                                 )
-                              : Container(
-                                  height: height * 0.13,
-                                  width: width * 0.25,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      // image: AssetImage(
-                                      //   "assets/images/s7.jpg",
-                                      // ),
-                                      image: FileImage(
-                                        file!,
+                              : file != null && typeOfPost == "Image"
+                                  ? Container(
+                                      height: height * 0.13,
+                                      width: width * 0.25,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: FileImage(
+                                            file!,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  alignment: Alignment.topRight,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        file = null;
-                                      });
-                                    },
-                                    child: Icon(
-                                      Icons.cancel,
-                                      size: height * 0.025,
-                                      color: Colors.grey[300],
-                                    ),
-                                  ),
-                                ),
+                                      alignment: Alignment.topRight,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            typeOfPost = null;
+                                            file = null;
+                                          });
+                                        },
+                                        child: Icon(
+                                          Icons.cancel,
+                                          size: height * 0.025,
+                                          color: Colors.grey[300],
+                                        ),
+                                      ),
+                                    )
+                                  : file != null && typeOfPost == "Video"
+                                      ? Container(
+                                          height: height * 0.13,
+                                          width: width * 0.25,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Stack(
+                                            fit: StackFit.expand,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                child: VideoIntializeWidget(
+                                                  file: file,
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      typeOfPost = null;
+                                                      file = null;
+                                                    });
+                                                  },
+                                                  child: Icon(
+                                                    Icons.cancel,
+                                                    size: height * 0.025,
+                                                    color: Colors.grey[300],
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.center,
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                      return PostVideoPlayer(
+                                                        file: file,
+                                                      );
+                                                    }));
+                                                  },
+                                                  child: Icon(
+                                                    EvaIcons.playCircleOutline,
+                                                    size: height * 0.025,
+                                                    color: Colors.grey[300],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ))
+                                      : GestureDetector(
+                                          onTap: () {
+                                            mediaPickerDialog(height, width);
+                                          },
+                                          child: Container(
+                                            height: height * 0.11,
+                                            width: width * 0.21,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Colors.grey[100],
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.add_a_photo,
+                                                color: Colors.grey[700],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                           SizedBox(
                             width: width * 0.06,
                           ),
@@ -399,5 +505,125 @@ class _StoryAddingState extends State<StoryAdding> {
         ),
       ),
     );
+  }
+}
+
+class VideoIntializeWidget extends StatefulWidget {
+  final File? file;
+  VideoIntializeWidget({this.file});
+
+  @override
+  _VideoIntializeWidgetState createState() => _VideoIntializeWidgetState();
+}
+
+class _VideoIntializeWidgetState extends State<VideoIntializeWidget> {
+  late VideoPlayerController videoPlayerController;
+
+  @override
+  void initState() {
+    videoPlayerController = VideoPlayerController.file(widget.file!);
+    videoPlayerController.initialize().then((value) {
+      setState(() {});
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: VideoPlayer(
+        videoPlayerController,
+      ),
+    );
+  }
+}
+
+class PostVideoPlayer extends StatefulWidget {
+  final File? file;
+  PostVideoPlayer({this.file});
+  @override
+  _PostVideoPlayerState createState() => _PostVideoPlayerState();
+}
+
+class _PostVideoPlayerState extends State<PostVideoPlayer> {
+  late VideoPlayerController videoPlayerController;
+  late ChewieController chewieController;
+  @override
+  void initState() {
+    initialize();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    chewieController.dispose();
+    super.dispose();
+  }
+
+  Future initialize() async {
+    videoPlayerController = VideoPlayerController.file(widget.file!);
+
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      aspectRatio: 1,
+      allowFullScreen: false,
+      showControls: true,
+      looping: false,
+      placeholder: Center(
+        child: circularProgressIndicator(),
+      ),
+    );
+  }
+
+  bool isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: backAerrowButton(height, width),
+          ),
+          title: Text(
+            "Selected video",
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    child: Chewie(
+                      controller: chewieController,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 }

@@ -35,14 +35,29 @@ class _MyAppState extends State<MyApp> {
   //   super.initState();
   // }
 
-  Stream getUser(String? email, String? name) async* {
+  // Stream getUser(String? email, String? name) async* {
+  //   try {
+  //     var url = Uri.parse('$weburl/user/othersignup');
+  //     var response = await http.post(url, body: {
+  //       'email': email,
+  //     });
+  //     if (response.statusCode == 200) {
+  //       yield response.body;
+  //     } else {
+  //       throw Exception("Something went wrong");
+  //     }
+  //   } catch (e) {
+  //     throw Exception("Something went wrong");
+  //   }
+  // }
+  Future getUser(String? email, String? name) async {
     try {
       var url = Uri.parse('$weburl/user/othersignup');
       var response = await http.post(url, body: {
         'email': email,
       });
       if (response.statusCode == 200) {
-        yield response.body;
+        return response.body;
       } else {
         throw Exception("Something went wrong");
       }
@@ -78,8 +93,8 @@ class _MyAppState extends State<MyApp> {
             if (userCurrent == null) {
               return SignUpScreen();
             } else {
-              return StreamBuilder(
-                stream: getUser(userCurrent!.email, userCurrent!.displayName),
+              return FutureBuilder(
+                future: getUser(userCurrent!.email, userCurrent!.displayName),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Container(

@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Screens/CreateGroup.dart';
@@ -7,8 +11,10 @@ import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
 import 'package:timepass/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:timepass/models/profileModel.dart';
 
 enum SelectTab { Chat, Groups }
+enum ScreenType { Search, Chat }
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -20,7 +26,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController searchController = TextEditingController();
   SelectTab selectTab = SelectTab.Chat;
-
+  ScreenType type = ScreenType.Chat;
   late FocusNode focusNode;
 
   @override
@@ -121,19 +127,26 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  List<UserSearchModel>? _usersearchModel = [];
   Future searchUsers(String query) async {
     try {
-      var url = Uri.parse('$weburl/users/search?name=Milind');
+      var url = Uri.parse('$weburl/users/search?name=$query');
       var response;
       if (xAccessToken != null) {
         response = await http.get(
           url,
         );
-          print(response.body);
-          print(response.statusCode);
+
         if (response.statusCode == 200) {
-          print(response.body);
-          return response.body;
+          List<UserSearchModel> searchModel = [];
+          jsonDecode(response.body).forEach((element) {
+            UserSearchModel userSearchModel = UserSearchModel.fromJson(element);
+            searchModel.add(userSearchModel);
+          });
+          setState(() {
+            _usersearchModel = searchModel;
+          });
+          // return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
         }
@@ -167,25 +180,25 @@ class _ChatScreenState extends State<ChatScreen> {
               width,
               "Harsh",
               "Hello karthik..... how are you",
-              "assets/images/Ellipse 7.png",
+              "Assets/Images/Ellipse 7.png",
               "7:44 am",
               true,
               false),
         ),
         chatSections(height, width, "Swetha", "Hello karthik..... how are you",
-            "assets/images/Ellipse 8.png", "7:44 am", false, false),
+            "Assets/Images/Ellipse 8.png", "7:44 am", false, false),
         chatSections(height, width, "Balu", "Did you finish your work",
-            "assets/images/Ellipse 8.png", "7:44 am", false, true),
+            "Assets/Images/Ellipse 8.png", "7:44 am", false, true),
         chatSections(height, width, "ABC", "Hello friend..... how are you",
-            "assets/images/Ellipse 9.png", "7:44 am", false, false),
+            "Assets/Images/Ellipse 9.png", "7:44 am", false, false),
         chatSections(height, width, "Kiran", "Hello ABC!",
-            "assets/images/Ellipse 10.png", "7:44 am", false, true),
+            "Assets/Images/Ellipse 10.png", "7:44 am", false, true),
         chatSections(height, width, "Arjun", "How are you ?",
-            "assets/images/Ellipse 11.png", "7:44 am", false, false),
+            "Assets/Images/Ellipse 11.png", "7:44 am", false, false),
         chatSections(height, width, "Balu", "Did you finish your work",
-            "assets/images/Ellipse 8.png", "7:44 am", false, false),
+            "Assets/Images/Ellipse 8.png", "7:44 am", false, false),
         chatSections(height, width, "ABC", "Hello friend..... how are you",
-            "assets/images/Ellipse 9.png", "7:44 am", false, false),
+            "Assets/Images/Ellipse 9.png", "7:44 am", false, false),
       ],
     );
   }
@@ -207,16 +220,24 @@ class _ChatScreenState extends State<ChatScreen> {
             );
           },
           child: chatSections(height, width, "Funcky guys", "how are you? Guys",
-              "assets/images/Ellipse 7.png", "7:44 am", true, false),
+              "Assets/Images/Ellipse 7.png", "7:44 am", true, false),
         ),
-        chatSections(height, width, "Kylo apps", "Hello karthik",
-            "assets/images/Ellipse 8.png", "7:44 am", false, false),
+        chatSections(
+          height,
+          width,
+          "Kylo apps",
+          "Hello karthik",
+          "Assets/Images/Ellipse 9.png",
+          "7:44 am",
+          false,
+          false,
+        ),
         chatSections(
             height,
             width,
             "Groups of group",
             "Did you finish your work",
-            "assets/images/Ellipse 8.png",
+            "Assets/Images/Ellipse 8.png",
             "7:44 am",
             false,
             false),
@@ -225,7 +246,7 @@ class _ChatScreenState extends State<ChatScreen> {
             width,
             "ABC group",
             "Hello friend..... how are you",
-            "assets/images/Ellipse 9.png",
+            "Assets/Images/Ellipse 9.png",
             "7:44 am",
             false,
             false),
@@ -266,7 +287,21 @@ class _ChatScreenState extends State<ChatScreen> {
             searchUsers(value);
           }
         },
-        onChanged: (String? value) {},
+        onChanged: (String? value) {
+          if (value!.trim().isNotEmpty) {
+            if (type == ScreenType.Chat) {
+              setState(() {
+                type = ScreenType.Search;
+              });
+            }
+          } else {
+            if (type == ScreenType.Search) {
+              setState(() {
+                type = ScreenType.Chat;
+              });
+            }
+          }
+        },
         decoration: InputDecoration(
           prefixIcon: Icon(
             EvaIcons.searchOutline,
@@ -400,6 +435,29 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Widget searchResultWidget(double height, double width) {
+    return Expanded(
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: width * 0.04,
+        ),
+        color: Theme.of(context).primaryColor,
+        child: ListView.builder(
+            itemCount: _usersearchModel!.length,
+            itemBuilder: (BuildContext context, int i) {
+              return ListTile(
+                leading: CircleAvatar(
+                  radius: height * 0.02,
+                  backgroundImage: CachedNetworkImageProvider(
+                      _usersearchModel![i].imageUrl!),
+                ),
+                title: Text(_usersearchModel![i].name!),
+              );
+            }),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -452,7 +510,9 @@ class _ChatScreenState extends State<ChatScreen> {
           SizedBox(
             height: height * 0.02,
           ),
-          sectionOfChatting(height, width),
+          type == ScreenType.Chat
+              ? sectionOfChatting(height, width)
+              : searchResultWidget(height, width)
           // KeyboardVisibilityBuilder(builder: (context, child, visible) {
           //   if (!visible) {
           //     return sectionOfChatting(height, width);

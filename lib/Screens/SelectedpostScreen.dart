@@ -247,6 +247,13 @@ class _StoryVideoSelectedState extends State<StoryVideoSelected> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    videoPlayerController.dispose();
+    chewieController.dispose();
+    super.dispose();
+  }
+
   Future initialize() async {
     videoPlayerController = VideoPlayerController.file(widget.file!);
     // await videoPlayerController.initialize();

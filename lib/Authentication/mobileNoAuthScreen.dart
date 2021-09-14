@@ -279,22 +279,41 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
 
             if (user != null) {
               // await mobileAuth.signOut();
-              await auth.signInWithEmailAndPassword(
-                  email: widget.email!, password: widget.password!);
+              if (widget.typeOfSignup == "Email") {
+                await auth.signInWithEmailAndPassword(
+                    email: widget.email!, password: widget.password!);
 
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreateUserProfile(
-                    phoneNumber: mobileController.text,
-                    email: widget.email,
-                    imageurl: widget.imageurl,
-                    name: widget.name,
-                    typeOfSignup: widget.typeOfSignup,
-                    userid: widget.userid,
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateUserProfile(
+                      phoneNumber: mobileController.text,
+                      email: widget.email,
+                      imageurl: widget.imageurl,
+                      name: widget.name,
+                      typeOfSignup: widget.typeOfSignup,
+                      userid: widget.userid,
+                    ),
                   ),
-                ),
-              );
+                );
+              } else {
+                print(widget.credential!);
+                await auth.signInWithCredential(widget.credential!);
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateUserProfile(
+                      phoneNumber: mobileController.text,
+                      email: widget.email,
+                      imageurl: widget.imageurl,
+                      name: widget.name,
+                      typeOfSignup: widget.typeOfSignup,
+                      userid: widget.userid,
+                    ),
+                  ),
+                );
+              }
             } else {
               print("Error");
             }

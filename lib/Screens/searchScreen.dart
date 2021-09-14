@@ -1,14 +1,24 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:eva_icons_flutter/icon_data.dart';
 import 'package:flutter/material.dart';
+import 'package:timepass/API/BasicAPI.dart';
+import 'package:timepass/Authentication/authServices.dart';
+import 'package:timepass/Screens/otherUserProfileScreen.dart';
 import 'package:timepass/Screens/profile_Screen.dart';
+import 'package:timepass/Utils/colors.dart';
+import 'package:timepass/Widgets/backAerrowWidget.dart';
 import 'package:timepass/Widgets/moreWidget.dart';
 import 'package:http/http.dart' as http;
 import 'package:timepass/Widgets/progressIndicators.dart';
+import 'package:timepass/main.dart';
 import 'package:timepass/models/memesModel.dart';
+import 'package:timepass/models/profileModel.dart';
+
+enum ScreenType { Search, Explore }
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -18,19 +28,20 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  ScreenType screenType = ScreenType.Explore;
   List<String> imageItems = [
-    "assets/images/s9.jpg",
-    "assets/images/s2.jpg",
-    "assets/images/s4.jpg",
-    "assets/images/s5.jpg",
-    "assets/images/s6.jpg",
-    "assets/images/s7.jpg",
-    "assets/images/s8.jpg",
-    "assets/images/s4.jpg",
-    "assets/images/s5.jpg",
-    "assets/images/s6.jpg",
-    "assets/images/s7.jpg",
-    "assets/images/s8.jpg",
+    "Assets/Images/s9.jpg",
+    "Assets/Images/s2.jpg",
+    "Assets/Images/s4.jpg",
+    "Assets/Images/s5.jpg",
+    "Assets/Images/s6.jpg",
+    "Assets/Images/s7.jpg",
+    "Assets/Images/s8.jpg",
+    "Assets/Images/s4.jpg",
+    "Assets/Images/s5.jpg",
+    "Assets/Images/s6.jpg",
+    "Assets/Images/s7.jpg",
+    "Assets/Images/s8.jpg",
   ];
 
   Future getMemePosts() async {
@@ -55,86 +66,84 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  AppBar appbarOfHOmepage(double height, double width) {
-    return AppBar(
-      leading:
-          // Builder(
-          //   builder: (BuildContext context) {
-          //     return
-          GestureDetector(
-        onTap: () {
-          // Scaffold.of(context).openDrawer();
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) {
-            return MoreWidget();
-          }));
-        },
-        child: Container(
-            margin: EdgeInsets.only(
-              left: MediaQuery.of(context).size.width * 0.01,
-              top: MediaQuery.of(context).size.height * 0.02,
-              bottom: MediaQuery.of(context).size.height * 0.01,
-            ),
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue,
-            ),
-            height: MediaQuery.of(context).size.height * 0.01,
-            width: MediaQuery.of(context).size.width * 0.01,
-            child: Image(
-              alignment: Alignment.center,
-              height: MediaQuery.of(context).size.height * 0.02,
-              image: AssetImage(
-                "assets/images/leadingIcon.png",
-              ),
-            )),
-      ),
-      //     ;
-      //   },
-      // ),
-      actions: [
-        GestureDetector(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return ProfileScreen();
-            }));
-          },
-          child: Container(
-              margin: EdgeInsets.only(
-                right: MediaQuery.of(context).size.width * 0.02,
-              ),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blue,
-              ),
-              height: MediaQuery.of(context).size.height * 0.07,
-              width: MediaQuery.of(context).size.width * 0.07,
-              child: Image(
-                alignment: Alignment.center,
-                image: AssetImage(
-                  "assets/images/profileImage.png",
-                ),
-              )),
-        ),
-      ],
-      elevation: 0,
-      title: Container(
-        margin: EdgeInsets.only(
-          top: MediaQuery.of(context).size.height * 0.011,
-        ),
-        height: MediaQuery.of(context).size.height * 0.08,
-        width: MediaQuery.of(context).size.width * 0.15,
-        child: Image.asset(
-          "assets/images/socioClub2x.png",
-          fit: BoxFit.fill,
-        ),
-      ),
-      centerTitle: true,
-      backgroundColor: Colors.white,
-    );
-  }
+  // AppBar appbarOfHOmepage(double height, double width) {
+  //   return AppBar(
+  //     leading:
+
+  //         GestureDetector(
+  //       onTap: () {
+
+  //         Navigator.push(context,
+  //             MaterialPageRoute(builder: (BuildContext context) {
+  //           return MoreWidget();
+  //         }));
+  //       },
+  //       child: Container(
+  //           margin: EdgeInsets.only(
+  //             left: MediaQuery.of(context).size.width * 0.01,
+  //             top: MediaQuery.of(context).size.height * 0.02,
+  //             bottom: MediaQuery.of(context).size.height * 0.01,
+  //           ),
+  //           alignment: Alignment.center,
+  //           decoration: BoxDecoration(
+  //             shape: BoxShape.circle,
+  //             color: Colors.blue,
+  //           ),
+  //           height: MediaQuery.of(context).size.height * 0.01,
+  //           width: MediaQuery.of(context).size.width * 0.01,
+  //           child: Image(
+  //             alignment: Alignment.center,
+  //             height: MediaQuery.of(context).size.height * 0.02,
+  //             image: AssetImage(
+  //               "Assets/Images/leadingIcon.png",
+  //             ),
+  //           )),
+  //     ),
+  //     //     ;
+  //     //   },
+  //     // ),
+  //     actions: [
+  //       GestureDetector(
+  //         onTap: () {
+  //           Navigator.push(context,
+  //               MaterialPageRoute(builder: (BuildContext context) {
+  //             return ProfileScreen();
+  //           }));
+  //         },
+  //         child: Container(
+  //             margin: EdgeInsets.only(
+  //               right: MediaQuery.of(context).size.width * 0.02,
+  //             ),
+  //             decoration: BoxDecoration(
+  //               shape: BoxShape.circle,
+  //               color: Colors.blue,
+  //             ),
+  //             height: MediaQuery.of(context).size.height * 0.07,
+  //             width: MediaQuery.of(context).size.width * 0.07,
+  //             child: Image(
+  //               alignment: Alignment.center,
+  //               image: AssetImage(
+  //                 "Assets/Images/profileImage.png",
+  //               ),
+  //             )),
+  //       ),
+  //     ],
+  //     elevation: 0,
+  //     title: Container(
+  //       margin: EdgeInsets.only(
+  //         top: MediaQuery.of(context).size.height * 0.011,
+  //       ),
+  //       height: MediaQuery.of(context).size.height * 0.08,
+  //       width: MediaQuery.of(context).size.width * 0.15,
+  //       child: Image.asset(
+  //         "Assets/Images/socioClub2x.png",
+  //         fit: BoxFit.fill,
+  //       ),
+  //     ),
+  //     centerTitle: true,
+  //     backgroundColor: Colors.white,
+  //   );
+  // }
 
   Widget postSwiperWidget(double height, double width) {
     return Align(
@@ -185,7 +194,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               child: ListTile(
                                 leading: CircleAvatar(
                                   backgroundImage: AssetImage(
-                                    "assets/images/story1.png",
+                                    "Assets/Images/story1.png",
                                   ),
                                 ),
                                 title: Text(
@@ -331,7 +340,7 @@ class _SearchScreenState extends State<SearchScreen> {
         image: DecorationImage(
           fit: BoxFit.fill,
           image: AssetImage(
-            "assets/images/searchNature.png",
+            "Assets/Images/searchNature.png",
           ),
         ),
       ),
@@ -344,15 +353,58 @@ class _SearchScreenState extends State<SearchScreen> {
           color: Color.fromRGBO(240, 240, 240, 1),
           borderRadius: BorderRadius.circular(32),
         ),
-        child: TextFormField(
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            prefixIcon: Icon(
-              EvaIcons.search,
-            ),
-            hintText: "Search socio club",
-          ),
+        child: textfield(height, width),
+      ),
+    );
+  }
+
+  TextEditingController controller = TextEditingController();
+
+  Widget textfield(double height, double width) {
+    return TextFormField(
+      onFieldSubmitted: (String? value) {
+        if (value != null) {
+          searchUsers(value);
+        }
+      },
+      onChanged: (String? value) {
+        if (value!.trim().isNotEmpty) {
+          if (screenType == ScreenType.Explore) {
+            setState(() {
+              screenType = ScreenType.Search;
+            });
+          }
+        } else {
+          if (screenType == ScreenType.Search) {
+            setState(() {
+              screenType = ScreenType.Explore;
+            });
+          }
+        }
+      },
+      controller: controller,
+      decoration: InputDecoration(
+        suffixIcon: controller.text.trim().isNotEmpty
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    controller.clear();
+                    screenType = ScreenType.Explore;
+                  });
+                },
+                icon: Icon(
+                  Icons.cancel,
+                ),
+              )
+            : Container(
+                height: 0,
+                width: 0,
+              ),
+        border: InputBorder.none,
+        prefixIcon: Icon(
+          EvaIcons.search,
         ),
+        hintText: "Search socio club",
       ),
     );
   }
@@ -377,18 +429,18 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   List<String> _images = [
-    "assets/images/s9.jpg",
-    "assets/images/s2.jpg",
-    "assets/images/s4.jpg",
-    "assets/images/s5.jpg",
-    "assets/images/s6.jpg",
-    "assets/images/s7.jpg",
-    "assets/images/s8.jpg",
-    "assets/images/s4.jpg",
-    "assets/images/s5.jpg",
-    "assets/images/s6.jpg",
-    "assets/images/s7.jpg",
-    "assets/images/s8.jpg",
+    "Assets/Images/s9.jpg",
+    "Assets/Images/s2.jpg",
+    "Assets/Images/s4.jpg",
+    "Assets/Images/s5.jpg",
+    "Assets/Images/s6.jpg",
+    "Assets/Images/s7.jpg",
+    "Assets/Images/s8.jpg",
+    "Assets/Images/s4.jpg",
+    "Assets/Images/s5.jpg",
+    "Assets/Images/s6.jpg",
+    "Assets/Images/s7.jpg",
+    "Assets/Images/s8.jpg",
   ];
 
   Widget participateItems(double height, double width, int i) {
@@ -463,7 +515,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         radius: 35,
                         backgroundColor: Colors.black54,
                         backgroundImage: AssetImage(
-                          "assets/images/profileImage2.png",
+                          "Assets/Images/profileImage2.png",
                         ),
                       ),
                       SizedBox(
@@ -624,27 +676,27 @@ class _SearchScreenState extends State<SearchScreen> {
               height,
               width,
               "Pubg",
-              "assets/images/s9.jpg",
+              "Assets/Images/s9.jpg",
               "Play now",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               () {},
             ),
             contestes(
               height,
               width,
               "BGMI",
-              "assets/images/s8.jpg",
+              "Assets/Images/s8.jpg",
               "Play now",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               () {},
             ),
             contestes(
               height,
               width,
               "COD",
-              "assets/images/s9.jpg",
+              "Assets/Images/s9.jpg",
               "Play now",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               () {},
             ),
           ],
@@ -685,7 +737,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: ListTile(
           leading: CircleAvatar(
             backgroundImage: AssetImage(
-              "assets/images/profileImage2.png",
+              "Assets/Images/profileImage2.png",
             ),
           ),
           title: Text(
@@ -716,54 +768,165 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  List<UserSearchModel>? _usersearchModel = [];
+  Future searchUsers(String query) async {
+    try {
+      setState(() {
+        isloading = true;
+      });
+      var url = Uri.parse('$weburl/users/search?name=$query');
+      var response;
+      if (xAccessToken != null) {
+        response = await http.get(
+          url,
+        );
+
+        if (response.statusCode == 200) {
+          List<UserSearchModel> searchModel = [];
+          jsonDecode(response.body).forEach((element) {
+            UserSearchModel userSearchModel = UserSearchModel.fromJson(element);
+            searchModel.add(userSearchModel);
+          });
+          setState(() {
+            _usersearchModel = searchModel;
+            isloading = false;
+          });
+          print(response.body);
+        } else {
+          AuthService().errorDialog(context, "Oops! Something went wrong");
+        }
+      } else {
+        AuthService().errorDialog(context, "Oops! Something went wrong");
+      }
+    } catch (e) {
+      AuthService().errorDialog(context, "Oops! Something went wrong");
+    } finally {
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
+
+  Widget searchResultWidget(double height, double width) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: width * 0.03,
+      ),
+      color: Theme.of(context).primaryColor,
+      child: ListView.builder(
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: _usersearchModel!.length,
+          itemBuilder: (BuildContext context, int i) {
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (BuildContext context) {
+                  return OtherUserProfileScreen(
+                    name: _usersearchModel![i].name,
+                    connections: _usersearchModel![i].connections,
+                    connectionsLength:
+                        _usersearchModel![i].connections!.length.toString(),
+                    id: _usersearchModel![i].userid,
+                    imageurl: _usersearchModel![i].imageUrl,
+                  );
+                }));
+              },
+              child: ListTile(
+                leading: CircleAvatar(
+                  radius: height * 0.02,
+                  backgroundImage: CachedNetworkImageProvider(
+                      _usersearchModel![i].imageUrl!),
+                ),
+                title: Text(_usersearchModel![i].name!),
+              ),
+            );
+          }),
+    );
+  }
+
+  bool isloading = false;
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      appBar: appbarOfHOmepage(height, width),
-      body: Container(
-        color: Colors.white,
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              SizedBox(
-                height: height * 0.015,
-              ),
-              searchBox(height, width),
-              optionsWidget(height, width),
-              SizedBox(
-                height: height * 0.01,
-              ),
-              postSwiperWidget(height, width),
-              titleHeading(
-                height,
-                width,
-                "Contests",
-              ),
-              participate(height, width),
-              SizedBox(
-                height: height * 0.012,
-              ),
-              titleHeading(
-                height,
-                width,
-                "Games",
-              ),
-              gamesItems(height, width),
-              titleHeading(
-                height,
-                width,
-                "Videos",
-              ),
-              videos(height, width),
-              SizedBox(
-                height: height * 0.12,
-              ),
-            ],
+      backgroundColor: whiteColor,
+      appBar: appbarOfHOmepage(height, width, context),
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: screenType == ScreenType.Explore
+                  ? Column(
+                      children: [
+                        SizedBox(
+                          height: height * 0.015,
+                        ),
+                        searchBox(height, width),
+                        optionsWidget(height, width),
+                        SizedBox(
+                          height: height * 0.01,
+                        ),
+                        postSwiperWidget(height, width),
+                        titleHeading(
+                          height,
+                          width,
+                          "Contests",
+                        ),
+                        participate(height, width),
+                        SizedBox(
+                          height: height * 0.012,
+                        ),
+                        titleHeading(
+                          height,
+                          width,
+                          "Games",
+                        ),
+                        gamesItems(height, width),
+                        titleHeading(
+                          height,
+                          width,
+                          "Videos",
+                        ),
+                        videos(height, width),
+                        SizedBox(
+                          height: height * 0.12,
+                        ),
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        SizedBox(
+                          height: height * 0.05,
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: width * 0.1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color.fromRGBO(240, 240, 240, 1),
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: textfield(height, width),
+                        ),
+                        SizedBox(
+                          height: height * 0.03,
+                        ),
+                        searchResultWidget(height, width)
+                      ],
+                    ),
+            ),
           ),
-        ),
+          isloading
+              ? Center(
+                  child: circularProgressIndicator(),
+                )
+              : Container(),
+        ],
       ),
     );
   }

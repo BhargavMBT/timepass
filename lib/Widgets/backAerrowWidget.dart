@@ -76,58 +76,12 @@ AppBar appbarOfHOmepage(double height, double width, BuildContext context) {
             alignment: Alignment.center,
             height: MediaQuery.of(context).size.height * 0.02,
             image: AssetImage(
-              "assets/images/leadingIcon.png",
+              "Assets/Images/leadingIcon.png",
             ),
           )),
     ),
     actions: [
-      GestureDetector(
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) {
-            return ProfileScreen();
-          }));
-        },
-        child: FutureBuilder(
-          future: APIServices().getProfile(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              var jsonData = jsonDecode(snapshot.data);
-              UserProfile user = UserProfile.fromJson(jsonData);
-              return Container(
-                margin: EdgeInsets.only(
-                  right: MediaQuery.of(context).size.width * 0.02,
-                ),
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(
-                        user.imageurl!,
-                      ),
-                    )),
-                height: MediaQuery.of(context).size.height * 0.07,
-                width: MediaQuery.of(context).size.width * 0.08,
-              );
-            } else if (snapshot.hasError) {
-              return Container(
-                  margin: EdgeInsets.only(
-                    right: MediaQuery.of(context).size.width * 0.02,
-                  ),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue,
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.07,
-                  width: MediaQuery.of(context).size.width * 0.07,
-                  child: Icon(Icons.error));
-            } else {
-              return Container();
-            }
-          },
-        ),
-      ),
+      profileIcon(context),
     ],
     elevation: 0,
     title: Container(
@@ -137,11 +91,61 @@ AppBar appbarOfHOmepage(double height, double width, BuildContext context) {
       height: MediaQuery.of(context).size.height * 0.08,
       width: MediaQuery.of(context).size.width * 0.15,
       child: Image.asset(
-        "assets/images/socioClub2x.png",
+        "Assets/Images/socioClub2x.png",
         fit: BoxFit.fill,
       ),
     ),
     centerTitle: true,
     backgroundColor: Colors.white,
+  );
+}
+
+Widget profileIcon(BuildContext context) {
+  return GestureDetector(
+    onTap: () {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext context) {
+        return ProfileScreen();
+      }));
+    },
+    child: FutureBuilder(
+      future: APIServices().getProfile(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          var jsonData = jsonDecode(snapshot.data);
+          UserProfile user = UserProfile.fromJson(jsonData);
+          return Container(
+            margin: EdgeInsets.only(
+              right: MediaQuery.of(context).size.width * 0.02,
+            ),
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                image: DecorationImage(
+                  fit: BoxFit.fill,
+                  image: NetworkImage(
+                    user.imageurl!,
+                  ),
+                )),
+            height: MediaQuery.of(context).size.height * 0.07,
+            width: MediaQuery.of(context).size.width * 0.08,
+          );
+        } else if (snapshot.hasError) {
+          return Container(
+              margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.02,
+              ),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue,
+              ),
+              height: MediaQuery.of(context).size.height * 0.07,
+              width: MediaQuery.of(context).size.width * 0.07,
+              child: Icon(Icons.error));
+        } else {
+          return Container();
+        }
+      },
+    ),
   );
 }

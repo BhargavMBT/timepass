@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:chewie/chewie.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/leaderBoard.dart';
-import 'package:timepass/Screens/message_screen.dart';
 import 'package:timepass/Screens/profileSettings.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
@@ -17,16 +15,25 @@ import 'package:http/http.dart' as http;
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';
 import 'package:timepass/models/profileModel.dart';
-import 'package:video_player/video_player.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class OtherUserProfileScreen extends StatefulWidget {
+  final String? name;
+  final String? id;
+  final String? imageurl;
+  final String? connectionsLength;
+  final List<dynamic>? connections;
+  OtherUserProfileScreen(
+      {this.name,
+      this.id,
+      this.imageurl,
+      this.connections,
+      this.connectionsLength});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _OtherUserProfileScreenState createState() => _OtherUserProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
   void initState() {
     super.initState();
   }
@@ -47,13 +54,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future getProfile() async {
     try {
-      var url = Uri.parse('$weburl/profile');
+      var url = Uri.parse('$weburl/users/search?_id=${widget.id}');
       var response;
       if (xAccessToken != null) {
-        response = await http.get(url, headers: {
-          'x-access-token': xAccessToken!,
-        });
+        response = await http.get(
+          url,
+        );
         if (response.statusCode == 200) {
+          print(response.body);
           return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
@@ -68,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future getUserPost() async {
     try {
-      var url = Uri.parse('$weburl/posts/post/$userid');
+      var url = Uri.parse('$weburl/posts/post/${widget.id}');
       var response;
       if (xAccessToken != null) {
         response = await http.get(url, headers: {
@@ -89,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Widget imageContainer(double height, double width, String imageUrl) {
+  Widget container(double height, double width, String imageUrl) {
     return Stack(children: [
       Container(
         margin: EdgeInsets.symmetric(
@@ -144,79 +152,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ]);
   }
 
-  Widget videoContainer(double height, double width, String url) {
-    return Stack(children: [
-      Container(
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.of(context).size.width * 0.009,
-        ),
-        height: MediaQuery.of(context).size.height * 0.5,
-        width: MediaQuery.of(context).size.width * 0.5,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey[600]!,
-              blurRadius: 0.07,
-              spreadRadius: 0.07,
-            )
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: PostVideoIntializeWidget(
-            url: url,
-          ),
-        ),
-      ),
-      Align(
-        alignment: Alignment.bottomRight,
-        child: Container(
-            height: height * 0.05,
-            margin: EdgeInsets.only(
-              right: width * 0.03,
-              bottom: 0,
-            ),
-            alignment: Alignment.centerRight,
-            child: Container(
-              height: height * 0.06,
-              width: width * 0.06,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.black.withOpacity(
-                  0.4,
-                ),
-              ),
-              child: Icon(
-                EvaIcons.share,
-                size: 12,
-                color: Color.fromRGBO(255, 255, 255, 1),
-              ),
-            )),
-      ),
-      Align(
-        alignment: Alignment.center,
-        child: GestureDetector(
-          onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (BuildContext context) {
-              return PostVideoPlayer(
-                url: url,
-              );
-            }));
-          },
-          child: Icon(
-            EvaIcons.playCircleOutline,
-            size: height * 0.035,
-            color: Colors.grey[300],
-          ),
-        ),
-      ),
-    ]);
-  }
-
   //gridview
   Widget gridview(double height, double width) {
     return FutureBuilder(
@@ -244,17 +179,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       right: width * 0.02,
                     ),
                     itemBuilder: (BuildContext context, int i) {
-                      return _list[i].type == "Image"
-                          ? imageContainer(
-                              height,
-                              width,
-                              _list[i].postUrl!,
-                            )
-                          : videoContainer(
-                              height,
-                              width,
-                              _list[i].postUrl!,
-                            );
+                      return container(
+                        height,
+                        width,
+                        _list[i].postUrl!,
+                      );
                     },
                     crossAxisSpacing: width * 0.02,
                     mainAxisSpacing: height * 0.015,
@@ -263,9 +192,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
           } else if (snapshot.hasError) {
             return Container(
-                height: height * 0.25,
-                alignment: Alignment.center,
-                child: Text("Somethign went wrong. Try again later."));
+              height: height * 0.25,
+              alignment: Alignment.center,
+              child: Text("Something went wrong! Try again later."),
+            );
           } else {
             return Container(
               height: height * 0.6,
@@ -393,6 +323,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  bool isloadingConnect = false;
+
+  Future connectUser() async {
+    try {
+      setState(() {
+        isloadingConnect = true;
+      });
+      var url = Uri.parse('$weburl/profile/connection/add/${widget.id}');
+
+      if (xAccessToken != null) {
+        var response = await http.patch(url, headers: {
+          'x-access-token': xAccessToken!,
+        });
+        if (response.statusCode == 200) {
+          return response.body;
+        } else {
+          throw Exception("Oops! Something went wrong");
+        }
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } catch (e) {
+      throw Exception("Oops! Something went wrong");
+    } finally {
+      setState(() {
+        isloadingConnect = false;
+      });
+    }
+  }
+
+  Future removeConnectUser() async {
+    try {
+      setState(() {
+        isloadingConnect = true;
+      });
+      var url = Uri.parse('$weburl/profile/connection/remove/${widget.id}');
+
+      if (xAccessToken != null) {
+        var response = await http.patch(url, headers: {
+          'x-access-token': xAccessToken!,
+        });
+        print(response.body);
+        if (response.statusCode == 200) {
+          return response.body;
+        } else {
+          throw Exception("Oops! Something went wrong");
+        }
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception("Oops! Something went wrong");
+    } finally {
+      setState(() {
+        isloadingConnect = false;
+      });
+    }
+  }
+
   //profile Header
   Widget profileHeader(double height, double width) {
     return Container(
@@ -408,9 +398,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           future: getProfile(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              var result = jsonDecode(snapshot.data);
-              UserProfile user = UserProfile.fromJson(result);
-
+              List<UserSearchModel> searchModel = [];
+              jsonDecode(snapshot.data).forEach((element) {
+                UserSearchModel userSearchModel =
+                    UserSearchModel.fromJson(element);
+                searchModel.add(userSearchModel);
+              });
               return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -428,7 +421,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           storyContainer(
                             height,
                             width,
-                            user.imageurl!,
+                            searchModel[0].imageUrl!,
                           ),
                           SizedBox(
                             width: width * 0.04,
@@ -439,78 +432,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              user.name.toString(),
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 22,
-                                              ),
-                                            ),
-                                            Text(
-                                              "vijayawada,AP",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder:
-                                                    (BuildContext context) {
-                                              return ProfileSettingsScreen();
-                                            }));
-                                          },
-                                          icon: Icon(
-                                            EvaIcons.settings2Outline,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ]),
+                                  SizedBox(
+                                    height: height * 0.03,
+                                  ),
+                                  Text(
+                                    searchModel[0].name!,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 22,
+                                    ),
+                                  ),
                                   Container(
                                     margin: EdgeInsets.only(
                                       right: width * 0.07,
-                                      top: height * 0.015,
+                                      top: height * 0.02,
                                     ),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
-                                        Container(
-                                          alignment: Alignment.center,
-                                          height: height * 0.05,
-                                          width: width * 0.28,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              gradient: LinearGradient(colors: [
-                                                Color.fromRGBO(
-                                                    38, 203, 255, 0.86),
-                                                Color.fromRGBO(
-                                                    38, 203, 255, 0.5),
-                                                Color.fromRGBO(
-                                                    38, 203, 255, 0.48),
-                                              ])),
-                                          child: Text("Connect",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w600,
-                                              )),
+                                        GestureDetector(
+                                          onTap:  removeConnectUser,
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            height: height * 0.05,
+                                            width: width * 0.28,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                gradient:
+                                                    LinearGradient(colors: [
+                                                  Color.fromRGBO(
+                                                      38, 203, 255, 0.86),
+                                                  Color.fromRGBO(
+                                                      38, 203, 255, 0.5),
+                                                  Color.fromRGBO(
+                                                      38, 203, 255, 0.48),
+                                                ])),
+                                            child: isloadingConnect
+                                                ? Container(
+                                                    height: height * 0.025,
+                                                    width: width * 0.03,
+                                                    child:
+                                                        circularProgressIndicator(
+                                                            whitecolors: true))
+                                                : searchModel[0]
+                                                        .connections!
+                                                        .every((element) =>
+                                                            element["userId"] ==
+                                                            userid)
+                                                    ? Text("Connected",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ))
+                                                    : Text("Connect",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 13,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        )),
+                                          ),
                                         ),
                                         GestureDetector(
                                           onTap: () {
@@ -569,7 +554,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           calculationsWidget(
                               height,
                               width,
-                              user.connections!.length.toString(),
+                              searchModel[0].connections!.length.toString(),
                               "Connections"),
                           calculationsWidget(
                               height, width, "5K", "Total likes"),
@@ -608,126 +593,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       ),
     );
-  }
-}
-
-class PostVideoIntializeWidget extends StatefulWidget {
-  final String? url;
-  PostVideoIntializeWidget({this.url});
-
-  @override
-  _PostVideoIntializeWidgetState createState() =>
-      _PostVideoIntializeWidgetState();
-}
-
-class _PostVideoIntializeWidgetState extends State<PostVideoIntializeWidget> {
-  late VideoPlayerController videoPlayerController;
-
-  @override
-  void initState() {
-    videoPlayerController = VideoPlayerController.network(widget.url!);
-    videoPlayerController.initialize().then((value) {
-      setState(() {});
-    });
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    videoPlayerController.dispose();
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: VideoPlayer(
-        videoPlayerController,
-      ),
-    );
-  }
-}
-
-class PostVideoPlayer extends StatefulWidget {
-  final String? url;
-  PostVideoPlayer({this.url});
-  @override
-  _PostVideoPlayerState createState() => _PostVideoPlayerState();
-}
-
-class _PostVideoPlayerState extends State<PostVideoPlayer> {
-  late VideoPlayerController videoPlayerController;
-  late ChewieController chewieController;
-  @override
-  void initState() {
-    initialize();
-
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    videoPlayerController.dispose();
-    chewieController.dispose();
-    super.dispose();
-  }
-
-  Future initialize() async {
-    videoPlayerController = VideoPlayerController.network(widget.url!);
-
-    chewieController = ChewieController(
-      videoPlayerController: videoPlayerController,
-      autoPlay: true,
-      aspectRatio: 1,
-      allowFullScreen: false,
-      showControls: true,
-      looping: false,
-      placeholder: Center(
-        child: circularProgressIndicator(),
-      ),
-    );
-  }
-
-  bool isloading = false;
-  @override
-  Widget build(BuildContext context) {
-    var height = MediaQuery.of(context).size.height;
-    var width = MediaQuery.of(context).size.width;
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          centerTitle: true,
-          leading: GestureDetector(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            child: backAerrowButton(height, width),
-          ),
-          title: Text(
-            "Posted video",
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        body: Stack(
-          children: [
-            Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    child: Chewie(
-                      controller: chewieController,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ));
   }
 }

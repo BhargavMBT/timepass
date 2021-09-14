@@ -1,15 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
-
 class ProfileModel {
   final String? postid;
   final String? body;
   final String? postUrl;
   final String? author;
+  final String? type;
   ProfileModel({
     this.postid,
     this.author,
     this.body,
     this.postUrl,
+    this.type,
   });
 
   factory ProfileModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +18,7 @@ class ProfileModel {
       body: json["body"],
       postUrl: json["post"],
       postid: json["_id"],
+      type: json["type"],
     );
   }
 }
@@ -38,6 +39,30 @@ class UserProfile {
       connections: json["connections"],
       imageurl: json["photourl"],
       name: json["name"],
+    );
+  }
+}
+
+class UserSearchModel {
+  final String? name;
+  final String? userid;
+  final String? imageUrl;
+  final String? phone;
+  final List<dynamic>? connections;
+  UserSearchModel({
+    this.name,
+    this.userid,
+    this.imageUrl,
+    this.phone,
+    this.connections,
+  });
+  factory UserSearchModel.fromJson(Map<String, dynamic> json) {
+    return UserSearchModel(
+      name: json["name"],
+      userid: json["_id"],
+      imageUrl: json["photourl"],
+      phone: json["phone"],
+      connections: json["connections"],
     );
   }
 }

@@ -156,8 +156,8 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           GestureDetector(
             onTap: () async {
               await auth.signOut().then((value) async {
-                // await AuthService().googleSignIn.signOut();
-                // await FacebookAuth.instance.logOut();
+                await googleSignIn.signOut();
+                await facebookAuth.logOut();
               }).then((value) {
                 Navigator.pushReplacement(context,
                     MaterialPageRoute(builder: (BuildContext context) {

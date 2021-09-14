@@ -8,9 +8,10 @@ LinearProgressIndicator linearProgressIndicator(double height) =>
         Colors.black,
       ),
     );
-CircularProgressIndicator circularProgressIndicator() =>
+CircularProgressIndicator circularProgressIndicator(
+        {bool whitecolors = false}) =>
     CircularProgressIndicator(
-      backgroundColor: Colors.blue,
+      backgroundColor: whitecolors ? Colors.white : Colors.blue,
       strokeWidth: 2,
       valueColor: AlwaysStoppedAnimation(
         Colors.black,

@@ -255,25 +255,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
               setState(() {
                 isloading = true;
               });
-              AuthService().signInWithGoogle(context).then(
-                (User? value) {
-                  if (value != null) {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (BuildContext context) {
-                      return MobileNumberAuthScreen(
-                        email: value.email,
-                        imageurl: value.photoURL,
-                        name: value.displayName,
-                        typeOfSignup: "Google sign in",
-                        userid: value.uid,
-                      );
-                      // BottomNavigationBarWidget();
-                    }));
-                  } else {
-                    AuthService().errorDialog(context, "Something went wrong.");
-                  }
-                },
-              );
+              AuthService().signInWithGoogle(context);
+              // then(
+              //   (User? value) {
+              //     if (value != null) {
+              //       Navigator.pushReplacement(context,
+              //           MaterialPageRoute(builder: (BuildContext context) {
+              //         return MobileNumberAuthScreen(
+              //           email: value.email,
+              //           imageurl: value.photoURL,
+              //           name: value.displayName,
+              //           typeOfSignup: "Google sign in",
+              //           userid: value.uid,
+              //         );
+              //         // BottomNavigationBarWidget();
+              //       }));
+              //     } else {
+              //       AuthService().errorDialog(context, "Something went wrong.");
+              //     }
+              //   },
+              // );
               setState(() {
                 isloading = false;
               });

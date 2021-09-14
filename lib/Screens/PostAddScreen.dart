@@ -8,12 +8,15 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:photofilters/filters/subfilters.dart';
+import 'package:story_creator/story_creator.dart';
+
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 
 import 'dart:ui' as ui;
 import 'package:timepass/Screens/SelectedpostScreen.dart';
 import 'package:timepass/Screens/message_screen.dart';
+import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/filtersData/filterColorData.dart';
 import 'package:timepass/main.dart';
@@ -28,6 +31,16 @@ class PostAddScreen extends StatefulWidget {
 }
 
 class _PostAddScreenState extends State<PostAddScreen> {
+  // void initState() {
+  //   super.initState();
+  // }
+
+  // @override
+  // void didChangeDependencies() {
+  //   sheet();
+  //   super.didChangeDependencies();
+  // }
+
   void cameraOpenforImage() async {
     Navigator.pop(context);
     XFile? imageFile =
@@ -69,9 +82,6 @@ class _PostAddScreenState extends State<PostAddScreen> {
         return StoryVideoSelected(
           file: File(imageFile.path),
         );
-        // SelectedPostScreen(
-        //   file: File(imageFile.path),
-        // );
       }));
     }
   }
@@ -171,16 +181,16 @@ class _PostAddScreenState extends State<PostAddScreen> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      sheet();
-    });
+    // WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    //   sheet();
+    // });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 1,
         centerTitle: true,
         title: Text(
-          "Add a Post",
+          "Add a story",
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -227,6 +237,30 @@ class _CustomeFilterScreenState extends State<CustomeFilterScreen> {
         builder: (context) => FinalScreen(
               imageData: uint8list,
             )));
+  }
+
+  void convertWidgetToImageandGOText(GlobalKey key) async {
+    RenderRepaintBoundary? repaintBoundary =
+        key.currentContext!.findRenderObject() as RenderRepaintBoundary?;
+    ui.Image boxImage = await repaintBoundary!.toImage(pixelRatio: 1);
+    ByteData? byteData =
+        await boxImage.toByteData(format: ui.ImageByteFormat.png);
+    Uint8List uint8list = byteData!.buffer.asUint8List();
+    final tempDir = await getTemporaryDirectory();
+    final File file = await new File('${tempDir.path}/image.jpg').create();
+    file.writeAsBytesSync(uint8list);
+    await Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => StoryCreator(
+              filePath: file.path,
+            ),
+          ),
+        )
+        .then((value) => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => FinalScreen(
+                  imageData: value.readAsBytesSync(),
+                ))));
   }
 
   final List<Map<String, dynamic>> _filterItems = [
@@ -308,6 +342,20 @@ class _CustomeFilterScreenState extends State<CustomeFilterScreen> {
                             color: Colors.white,
                             shape: BoxShape.circle,
                           ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: width * 0.04,
+                      top: height * 0.08,
+                      child: GestureDetector(
+                        onTap: () {
+                          convertWidgetToImageandGOText(_filterItems[i]["key"]);
+                        },
+                        child: Icon(
+                          EvaIcons.textOutline,
+                          color: whiteColor,
+                          size: height * 0.04,
                         ),
                       ),
                     ),
@@ -476,5 +524,19 @@ class _FinalScreenState extends State<FinalScreen> {
         ),
       ),
     );
+  }
+}
+
+class AddTextTypeStory extends StatefulWidget {
+  const AddTextTypeStory({Key? key}) : super(key: key);
+
+  @override
+  _AddTextTypeStoryState createState() => _AddTextTypeStoryState();
+}
+
+class _AddTextTypeStoryState extends State<AddTextTypeStory> {
+  @override
+  Widget build(BuildContext context) {
+    return Container();
   }
 }

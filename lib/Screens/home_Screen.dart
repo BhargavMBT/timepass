@@ -299,7 +299,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 child: storyContainer(
                   height,
                   width,
-                  "assets/images/yourstory.png",
+                  "Assets/Images/yourstory.png",
                   "Your story",
                   true,
                 ),
@@ -311,15 +311,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     return StoriesScreen();
                   }));
                 },
-                child: storyContainer(height, width, "assets/images/story1.png",
+                child: storyContainer(height, width, "Assets/Images/story1.png",
                     "HypeSun_98", false),
               ),
-              storyContainer(height, width, "assets/images/story2.png",
+              storyContainer(height, width, "Assets/Images/story2.png",
                   "KarolBary", false),
               storyContainer(
-                  height, width, "assets/images/story3.png", "Waggles", false),
+                  height, width, "Assets/Images/story3.png", "Waggles", false),
               storyContainer(
-                  height, width, "assets/images/yourstory.png", "XYZ", false)
+                  height, width, "Assets/Images/yourstory.png", "XYZ", false)
             ],
           )),
     );
@@ -388,7 +388,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                           child: ListTile(
                             leading: CircleAvatar(
                               backgroundImage: AssetImage(
-                                "assets/images/story1.png",
+                                "Assets/Images/story1.png",
                               ),
                             ),
                             title: Text(
@@ -467,27 +467,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               height,
               width,
               "Photography",
-              "assets/images/s7.jpg",
+              "Assets/Images/s7.jpg",
               "Participate",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               navigationfunction,
             ),
             contestes(
               height,
               width,
               "Meme chat",
-              "assets/images/s2.jpg",
+              "Assets/Images/s2.jpg",
               "Participate",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               navigationfunction,
             ),
             contestes(
               height,
               width,
               "Photography",
-              "assets/images/s3.jpg",
+              "Assets/Images/s3.jpg",
               "Participate",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               navigationfunction,
             ),
           ],
@@ -509,33 +509,56 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               height,
               width,
               "Pubg",
-              "assets/images/s9.jpg",
+              "Assets/Images/s9.jpg",
               "Play now",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               () {},
             ),
             contestes(
               height,
               width,
               "BGMI",
-              "assets/images/s8.jpg",
+              "Assets/Images/s8.jpg",
               "Play now",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               () {},
             ),
             contestes(
               height,
               width,
               "COD",
-              "assets/images/cod.png",
+              "Assets/Images/cod.png",
               "Play now",
-              "assets/images/trophy.png",
+              "Assets/Images/trophy.png",
               () {},
             ),
           ],
         ),
       ),
     );
+  }
+  // @override
+  // void initState(){
+  //   getAllstories();
+  //   super.initState();
+  // }
+
+  Future getAllstories() async {
+    try {
+      var url = Uri.parse('$weburl/stories/613f26e1404781e9513e423d');
+
+      var response = await http.get(url, headers: {
+        'x-access-token': xAccessToken!,
+      });
+      if (response.statusCode == 200) {
+        print(xAccessToken);
+        print(response.body);
+      } else {
+        throw Exception("something went wrong.");
+      }
+    } catch (e) {
+      throw Exception("something went wrong.");
+    }
   }
 
   @override

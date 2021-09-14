@@ -28,7 +28,42 @@ class AuthService {
 
       UserCredential authResult = await auth.signInWithCredential(credential);
       userCurrent = authResult.user;
-      return authResult.user;
+      User? value = authResult.user;
+      if (value != null) {
+        var url = Uri.parse('$weburl/user/othersignup');
+        var response = await http.post(url, body: {
+          'email': userCurrent!.email,
+        });
+        if (response.statusCode == 200) {
+          var data = jsonDecode(response.body);
+          xAccessToken = data['token'];
+          userid = data["result"]["_id"];
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return BottomNavigationBarWidget();
+          }));
+        } else if (response.statusCode == 500) {
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (BuildContext context) {
+            return MobileNumberAuthScreen(
+              email: value.email,
+              imageurl: value.photoURL,
+              name: value.displayName,
+              typeOfSignup: "Google",
+              userid: value.uid,
+              credential: credential,
+              password: "",
+            );
+            //   // BottomNavigationBarWidget();
+          }));
+        } else {
+          errorDialog(
+            context,
+            'Oops! Something went wrong.',
+          );
+        }
+      }
+      // return authResult.user;
     } catch (e) {
       errorDialog(
         context,

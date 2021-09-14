@@ -247,6 +247,8 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   }
 
   Future postUserData() async {
+    print(controller.text);
+    print(widget.name);
     setState(() {
       loading = true;
     });
@@ -261,13 +263,14 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
             // 'email': "milindvaghasiya6@gmail.com",
             // 'name': "Milind"
             'email': widget.email,
-            'name': widget.name == null ? controller.text : widget.name,
-            'phone': widget.phoneNumber,
+            'name': controller.text,
+            'phone': "2222222222",
             'photourl': photoUrl,
             'username': controller.text,
           });
 
           print(response.statusCode.toString());
+          print(response.body);
           if (response.statusCode == 200) {
             print('Response body: ${response.body}');
             setState(() {
@@ -285,6 +288,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
               ),
             );
           } else {
+            print("e");
             AuthService().errorDialog(
               context,
               "Oops! Something went wrong.",
@@ -303,6 +307,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
         );
       }
     } catch (e) {
+      print(e.toString());
       AuthService().errorDialog(
         context,
         "Oops! Something went wrong",
@@ -352,11 +357,11 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    print(widget.name);
-    print(widget.email);
-    print(widget.imageurl);
-    print(widget.userid);
-    print(widget.phoneNumber);
+    print(widget.name.toString());
+    print(widget.email.toString());
+    print(widget.imageurl.toString());
+    print(widget.userid.toString());
+    print(widget.phoneNumber.toString());
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Material(
