@@ -103,10 +103,10 @@ class _MoreWidgetState extends State<MoreWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                items(height, width, "Trolls", "assets/images/trolls.png"),
-                items(height, width, "Anonymous", "assets/images/trolls.png"),
-                items(height, width, "Contest's", "assets/images/trolls.png"),
-                items(height, width, "Leaderboard", "assets/images/trolls.png"),
+                items(height, width, "Trolls", "Assets/Images/trolls.png"),
+                items(height, width, "Anonymous", "Assets/Images/trolls.png"),
+                items(height, width, "Contest's", "Assets/Images/trolls.png"),
+                items(height, width, "Leaderboard", "Assets/Images/trolls.png"),
               ],
             ),
           )),

@@ -82,8 +82,42 @@ class AuthService {
               FacebookAuthProvider.credential(result.accessToken!.token);
           final userCredential = await FirebaseAuth.instance
               .signInWithCredential(facebookCredential);
-          return userCredential.user;
-
+          User? value = userCredential.user;
+          if (value != null) {
+            var url = Uri.parse('$weburl/user/othersignup');
+            var response = await http.post(url, body: {
+              'email': userCurrent!.email,
+            });
+            if (response.statusCode == 200) {
+              var data = jsonDecode(response.body);
+              xAccessToken = data['token'];
+              userid = data["result"]["_id"];
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return BottomNavigationBarWidget();
+              }));
+            } else if (response.statusCode == 500) {
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return MobileNumberAuthScreen(
+                  email: value.email,
+                  imageurl: value.photoURL,
+                  name: value.displayName,
+                  typeOfSignup: "Facebook",
+                  userid: value.uid,
+                  credential: facebookCredential,
+                  password: "",
+                );
+                //   // BottomNavigationBarWidget();
+              }));
+            } else {
+              errorDialog(
+                context,
+                'Oops! Something went wrong.',
+              );
+            }
+          }
+          break;
         case LoginStatus.cancelled:
           return null;
         case LoginStatus.failed:

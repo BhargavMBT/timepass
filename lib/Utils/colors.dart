@@ -29,3 +29,8 @@ LinearGradient storyGradient = LinearGradient(colors: [
   Color.fromRGBO(105, 128, 253, 1),
   Color.fromRGBO(105, 128, 253, 1),
 ]);
+
+LinearGradient profileCategoryGradient = LinearGradient(colors: [
+  Color.fromRGBO(38, 203, 255, 1),
+  Color.fromRGBO(105, 128, 253, 0.5),
+]);

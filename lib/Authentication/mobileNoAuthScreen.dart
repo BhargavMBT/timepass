@@ -415,7 +415,7 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
                   height: height * 0.5,
                   width: double.infinity,
                   child: Image.asset(
-                    "assets/images/login.jpg",
+                    "Assets/Images/login.jpg",
                   ),
                 ),
                 // countdowntimer(height, width),
@@ -527,7 +527,7 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
                             height: height * 0.5,
                             width: double.infinity,
                             child: Image.asset(
-                              "assets/images/login2.jpg",
+                              "Assets/Images/login2.jpg",
                             )),
                         textfields(
                           height,

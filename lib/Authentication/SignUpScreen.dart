@@ -246,7 +246,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget optionsOfSignup(double height, double width) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: width * 0.3),
+      margin: EdgeInsets.symmetric(horizontal: width * 0.38),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -322,11 +322,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               EvaIcons.facebook,
             ),
           ),
-          icon(
-            height,
-            width,
-            EvaIcons.twitter,
-          ),
+          // icon(
+          //   height,
+          //   width,
+          //   EvaIcons.twitter,
+          // ),
         ],
       ),
     );

@@ -16,6 +16,7 @@ import 'package:timepass/Screens/yourStoriesScreen.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Utils/textStyles.dart';
 import 'package:timepass/Utils/textTitleWidgets.dart';
+import 'package:timepass/Widgets/animationWidget.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
 import 'package:timepass/Widgets/drawerWidget.dart';
 import 'package:timepass/Widgets/moreWidget.dart';
@@ -291,10 +292,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             children: [
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (BuildContext context) {
-                    return YourStories();
-                  }));
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (BuildContext context) {
+                  //   return YourStories();
+                  // }));
+                  navagtionRoute(context, YourStories());
                 },
                 child: storyContainer(
                   height,

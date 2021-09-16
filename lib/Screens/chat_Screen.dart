@@ -4,13 +4,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Screens/CreateGroup.dart';
 import 'package:timepass/Screens/message_screen.dart';
 import 'package:timepass/Utils/colors.dart';
+import 'package:timepass/Widgets/animationWidget.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
+import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:timepass/models/chatUserModel.dart';
 import 'package:timepass/models/profileModel.dart';
 
 enum SelectTab { Chat, Groups }
@@ -32,13 +36,145 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     focusNode = FocusNode();
+    getConversations();
     super.initState();
+  }
+
+  getConversations() async {
+    try {
+      var url = Uri.parse('$weburl/conversations/my');
+      var response;
+      if (xAccessToken != null) {
+        response = await http.get(
+          url,
+          headers: {
+            'x-access-token': xAccessToken!,
+          },
+        );
+
+        if (response.statusCode == 200) {
+          return response.body;
+          // return response.body;
+        } else {
+          throw Exception("Oops! Something went wrong");
+        }
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } catch (e) {
+      print(e.toString());
+      throw Exception("Oops! Something went wrong");
+    }
   }
 
   @override
   void dispose() {
     focusNode.dispose();
     super.dispose();
+  }
+
+  Widget userchatSections(
+      String uid,
+      double height,
+      double width,
+      String title,
+      String subtitle,
+      String imagePath,
+      String time,
+      bool notify,
+      bool status) {
+    return FutureBuilder(
+        future: APIServices().getProfileofChatUsers(uid),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            List<UserSearchModel> searchModel = [];
+            jsonDecode(snapshot.data).forEach((element) {
+              UserSearchModel userSearchModel =
+                  UserSearchModel.fromJson(element);
+              searchModel.add(userSearchModel);
+            });
+            return Container(
+              child: ListTile(
+                title: Text(
+                  searchModel[0].name!,
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white),
+                ),
+                subtitle: Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromRGBO(
+                      255,
+                      255,
+                      255,
+                      0.59,
+                    ),
+                  ),
+                ),
+                leading: Stack(children: [
+                  CircleAvatar(
+                    backgroundImage:
+                        CachedNetworkImageProvider(searchModel[0].imageUrl!),
+                  ),
+                  status
+                      ? CircleAvatar(
+                          radius: 4,
+                          backgroundColor: Colors.green,
+                        )
+                      : Container(
+                          height: 0,
+                          width: 0,
+                        ),
+                ]),
+                trailing: Container(
+                  child: Column(children: [
+                    SizedBox(
+                      height: height * 0.015,
+                    ),
+                    notify
+                        ? CircleAvatar(
+                            radius: 9,
+                            child: Text(
+                              "1",
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            backgroundColor: Color.fromRGBO(255, 94, 25, 1),
+                          )
+                        : SizedBox(
+                            height: height * 0.02,
+                          ),
+                    Container(
+                      margin: EdgeInsets.only(top: height * 0.008),
+                      child: Text(
+                        time,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                          color: Color.fromRGBO(
+                            255,
+                            255,
+                            255,
+                            1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ]),
+                ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        });
   }
 
   Widget chatSections(
@@ -160,47 +296,106 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget chatUsers(double height, double width) {
-    return ListView(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      children: [
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return MessageScreen();
-                },
+    return FutureBuilder(
+        future: getConversations(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            List<ChatUserModel> _listUsers = [];
+            var data = jsonDecode(snapshot.data);
+
+            data.forEach((element) {
+              ChatUserModel model = ChatUserModel.fromJson(element);
+
+              _listUsers.add(model);
+            });
+            return ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: _listUsers.length,
+                shrinkWrap: true,
+                itemBuilder: (BuildContext context, int i) {
+                  return GestureDetector(
+                    onTap: () {
+                      navagtionRoute(
+                          context,
+                          MessageScreen(
+                            roomid: _listUsers[i].roomid,
+                            receiverUserid: _listUsers[i].users!.firstWhere(
+                                (element) =>
+                                    element["user"].toString() !=
+                                    userid)["user"],
+                          ));
+                    },
+                    child: userchatSections(
+                        _listUsers[i].users!.firstWhere((element) =>
+                            element["user"].toString() != userid)["user"],
+                        height,
+                        width,
+                        "Harsh",
+                        "Hello karthik..... how are you",
+                        "Assets/Images/Ellipse 7.png",
+                        "7:44 am",
+                        true,
+                        false),
+                  );
+                });
+            // return ListView(
+            //   shrinkWrap: true,
+            //   physics: NeverScrollableScrollPhysics(),
+            //   children: [
+            //     GestureDetector(
+            //       onTap: () {
+            //         // Navigator.push(
+            //         //   context,
+            //         //   MaterialPageRoute(
+            //         //     builder: (BuildContext context) {
+            //         //       return MessageScreen();
+            //         //     },
+            //         //   ),
+            //         // );
+            //         navagtionRoute(context, MessageScreen());
+            //       },
+            //       child: chatSections(
+            //           height,
+            //           width,
+            //           "Harsh",
+            //           "Hello karthik..... how are you",
+            //           "Assets/Images/Ellipse 7.png",
+            //           "7:44 am",
+            //           true,
+            //           false),
+            //     ),
+            //     chatSections(
+            //         height,
+            //         width,
+            //         "Swetha",
+            //         "Hello karthik..... how are you",
+            //         "Assets/Images/Ellipse 8.png",
+            //         "7:44 am",
+            //         false,
+            //         false),
+            //     chatSections(height, width, "Balu", "Did you finish your work",
+            //         "Assets/Images/Ellipse 8.png", "7:44 am", false, true),
+            //     chatSections(height, width, "ABC", "Hello friend..... how are you",
+            //         "Assets/Images/Ellipse 9.png", "7:44 am", false, false),
+            //     chatSections(height, width, "Kiran", "Hello ABC!",
+            //         "Assets/Images/Ellipse 10.png", "7:44 am", false, true),
+            //     chatSections(height, width, "Arjun", "How are you ?",
+            //         "Assets/Images/Ellipse 11.png", "7:44 am", false, false),
+            //     chatSections(height, width, "Balu", "Did you finish your work",
+            //         "Assets/Images/Ellipse 8.png", "7:44 am", false, false),
+            //     chatSections(height, width, "ABC", "Hello friend..... how are you",
+            //         "Assets/Images/Ellipse 9.png", "7:44 am", false, false),
+            //   ],
+            // );
+          } else {
+            return Container(
+              height: height*0.5,
+              child: Center(
+                child: circularProgressIndicator(),
               ),
             );
-          },
-          child: chatSections(
-              height,
-              width,
-              "Harsh",
-              "Hello karthik..... how are you",
-              "Assets/Images/Ellipse 7.png",
-              "7:44 am",
-              true,
-              false),
-        ),
-        chatSections(height, width, "Swetha", "Hello karthik..... how are you",
-            "Assets/Images/Ellipse 8.png", "7:44 am", false, false),
-        chatSections(height, width, "Balu", "Did you finish your work",
-            "Assets/Images/Ellipse 8.png", "7:44 am", false, true),
-        chatSections(height, width, "ABC", "Hello friend..... how are you",
-            "Assets/Images/Ellipse 9.png", "7:44 am", false, false),
-        chatSections(height, width, "Kiran", "Hello ABC!",
-            "Assets/Images/Ellipse 10.png", "7:44 am", false, true),
-        chatSections(height, width, "Arjun", "How are you ?",
-            "Assets/Images/Ellipse 11.png", "7:44 am", false, false),
-        chatSections(height, width, "Balu", "Did you finish your work",
-            "Assets/Images/Ellipse 8.png", "7:44 am", false, false),
-        chatSections(height, width, "ABC", "Hello friend..... how are you",
-            "Assets/Images/Ellipse 9.png", "7:44 am", false, false),
-      ],
-    );
+          }
+        });
   }
 
   Widget groupChats(double height, double width) {

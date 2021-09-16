@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/Screens/profile_Screen.dart';
+import 'package:timepass/Widgets/animationWidget.dart';
 import 'package:timepass/Widgets/moreWidget.dart';
 import 'package:timepass/models/profileModel.dart';
 
@@ -54,10 +55,16 @@ AppBar appbarOfHOmepage(double height, double width, BuildContext context) {
   return AppBar(
     leading: GestureDetector(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (BuildContext context) {
-          return MoreWidget();
-        }));
+        navagtionRoute(
+          context,
+          MoreWidget(),
+        );
+        // Navigator.push(context,
+        //     MaterialPageRoute(builder: (BuildContext context) {
+        //   return RoundTransition(
+        //     widget: MoreWidget(),
+        //   );
+        // }));
       },
       child: Container(
           margin: EdgeInsets.only(
@@ -103,10 +110,14 @@ AppBar appbarOfHOmepage(double height, double width, BuildContext context) {
 Widget profileIcon(BuildContext context) {
   return GestureDetector(
     onTap: () {
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext context) {
-        return ProfileScreen();
-      }));
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (BuildContext context) {
+      //   return ProfileScreen();
+      // }));
+      navagtionRoute(
+        context,
+        ProfileScreen(),
+      );
     },
     child: FutureBuilder(
       future: APIServices().getProfile(),

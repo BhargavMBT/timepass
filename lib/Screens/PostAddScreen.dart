@@ -251,16 +251,20 @@ class _CustomeFilterScreenState extends State<CustomeFilterScreen> {
     file.writeAsBytesSync(uint8list);
     await Navigator.of(context)
         .push(
-          MaterialPageRoute(
-            builder: (context) => StoryCreator(
-              filePath: file.path,
-            ),
-          ),
-        )
-        .then((value) => Navigator.of(context).push(MaterialPageRoute(
+      MaterialPageRoute(
+        builder: (context) => StoryCreator(
+          filePath: file.path,
+        ),
+      ),
+    )
+        .then((value) {
+      if (value != null) {
+        Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => FinalScreen(
                   imageData: value.readAsBytesSync(),
-                ))));
+                )));
+      }
+    });
   }
 
   final List<Map<String, dynamic>> _filterItems = [

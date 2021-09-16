@@ -19,6 +19,8 @@ import 'package:timepass/main.dart';
 import 'package:timepass/models/profileModel.dart';
 import 'package:video_player/video_player.dart';
 
+enum PostCategory { Image, Video, Bookmark }
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
@@ -27,12 +29,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  PostCategory postCategory = PostCategory.Image;
+
   void initState() {
     super.initState();
   }
-  //Leading icon
 
-  //grid items
   Widget gridItems(String path) {
     return Container(
       decoration: BoxDecoration(
@@ -224,48 +226,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             var postDataList = jsonDecode(snapshot.data!);
-            List<ProfileModel> _list = [];
+            List<ProfileModel> _totalList = [];
+            List<ProfileModel> _imagelist = [];
+            List<ProfileModel> _videolist = [];
             postDataList.forEach((element) {
               ProfileModel model = ProfileModel.fromJson(element);
-              _list.add(model);
+              _totalList.add(model);
+              if (model.type == "Image") {
+                _imagelist.add(model);
+              } else if (model.type == "Video") {
+                _videolist.add(model);
+              }
             });
-            return _list.isEmpty
+            return _totalList.isEmpty
                 ? Container(
                     height: height * 0.25,
                     alignment: Alignment.center,
                     child: Text("Posts are not generated."))
-                : StaggeredGridView.countBuilder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    itemCount: _list.length,
-                    padding: EdgeInsets.only(
-                      left: width * 0.02,
-                      right: width * 0.02,
-                    ),
-                    itemBuilder: (BuildContext context, int i) {
-                      return _list[i].type == "Image"
-                          ? imageContainer(
-                              height,
-                              width,
-                              _list[i].postUrl!,
-                            )
-                          : videoContainer(
-                              height,
-                              width,
-                              _list[i].postUrl!,
-                            );
-                    },
-                    crossAxisSpacing: width * 0.02,
-                    mainAxisSpacing: height * 0.015,
-                    staggeredTileBuilder: (index) {
-                      return StaggeredTile.count(1, index.isOdd ? 1 : 1.4);
-                    });
+                : postCategory == PostCategory.Image
+                    ? _imagelist.isEmpty
+                        ? Container(
+                            height: height * 0.25,
+                            alignment: Alignment.center,
+                            child: Text("Image posts are not generated."))
+                        : StaggeredGridView.countBuilder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            crossAxisCount: 2,
+                            itemCount: _imagelist.length,
+                            padding: EdgeInsets.only(
+                              left: width * 0.02,
+                              right: width * 0.02,
+                            ),
+                            itemBuilder: (BuildContext context, int i) {
+                              return imageContainer(
+                                height,
+                                width,
+                                _imagelist[i].postUrl!,
+                              );
+                            },
+                            crossAxisSpacing: width * 0.02,
+                            mainAxisSpacing: height * 0.015,
+                            staggeredTileBuilder: (index) {
+                              return StaggeredTile.count(
+                                  1, index.isOdd ? 1 : 1.4);
+                            })
+                    : postCategory == PostCategory.Video
+                        ? _videolist.isEmpty
+                            ? Container(
+                                height: height * 0.25,
+                                alignment: Alignment.center,
+                                child: Text("Video posts are not generated."))
+                            : StaggeredGridView.countBuilder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                crossAxisCount: 2,
+                                itemCount: _videolist.length,
+                                padding: EdgeInsets.only(
+                                  left: width * 0.02,
+                                  right: width * 0.02,
+                                ),
+                                itemBuilder: (BuildContext context, int i) {
+                                  return videoContainer(
+                                    height,
+                                    width,
+                                    _videolist[i].postUrl!,
+                                  );
+                                },
+                                crossAxisSpacing: width * 0.02,
+                                mainAxisSpacing: height * 0.015,
+                                staggeredTileBuilder: (index) {
+                                  return StaggeredTile.count(
+                                      1, index.isOdd ? 1 : 1.4);
+                                })
+                        : Container();
           } else if (snapshot.hasError) {
             return Container(
                 height: height * 0.25,
                 alignment: Alignment.center,
-                child: Text("Somethign went wrong. Try again later."));
+                child: Text("Something went wrong. Try again later."));
           } else {
             return Container(
               height: height * 0.6,
@@ -309,9 +348,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       height: height * 0.072,
       width: width,
-      padding: EdgeInsets.symmetric(
-        horizontal: width * 0.06,
-      ),
+      padding: postCategory == PostCategory.Image
+          ? EdgeInsets.only(right: width * 0.06)
+          : postCategory == PostCategory.Bookmark
+              ? EdgeInsets.only(left: width * 0.06)
+              : EdgeInsets.symmetric(
+                  horizontal: width * 0.06,
+                ),
       margin: EdgeInsets.only(
         top: height * 0.005,
         left: width * 0.08,
@@ -334,21 +377,87 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            Icons.category,
-            size: 31,
-          ),
-          Icon(
-            Icons.play_circle_fill_outlined,
-            size: 31,
-          ),
-          Icon(
-            EvaIcons.bookmark,
-            size: 31,
-          )
+          postCategory == PostCategory.Image
+              ? selectedCatagory(
+                  height,
+                  width,
+                  Icon(
+                    Icons.category,
+                    size: 31,
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      postCategory = PostCategory.Image;
+                    });
+                  },
+                  child: Icon(
+                    Icons.category,
+                    size: 31,
+                  ),
+                ),
+          postCategory == PostCategory.Video
+              ? selectedCatagory(
+                  height,
+                  width,
+                  Icon(
+                    Icons.play_circle_fill_outlined,
+                    size: 31,
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      postCategory = PostCategory.Video;
+                    });
+                  },
+                  child: Icon(
+                    Icons.play_circle_fill_outlined,
+                    size: 31,
+                  ),
+                ),
+          postCategory == PostCategory.Bookmark
+              ? selectedCatagory(
+                  height,
+                  width,
+                  Icon(
+                    EvaIcons.bookmark,
+                    size: 31,
+                  ))
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      postCategory = PostCategory.Bookmark;
+                    });
+                  },
+                  child: Icon(
+                    EvaIcons.bookmark,
+                    size: 31,
+                  ),
+                )
         ],
       ),
     );
+  }
+
+  Widget selectedCatagory(double height, double width, Widget icon) {
+    return Container(
+        width: width * 0.25,
+        height: height * 0.072,
+        decoration: BoxDecoration(
+          gradient: profileCategoryGradient,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(147, 144, 144, 0.25),
+              offset: Offset(0, 7),
+              blurRadius: 10,
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: icon);
   }
 
   Widget storyContainer(
@@ -439,6 +548,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  SizedBox(
+                                    height: height * 0.025,
+                                  ),
                                   Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -482,73 +594,73 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         ),
                                       ]),
-                                  Container(
-                                    margin: EdgeInsets.only(
-                                      right: width * 0.07,
-                                      top: height * 0.015,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Container(
-                                          alignment: Alignment.center,
-                                          height: height * 0.05,
-                                          width: width * 0.28,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              gradient: LinearGradient(colors: [
-                                                Color.fromRGBO(
-                                                    38, 203, 255, 0.86),
-                                                Color.fromRGBO(
-                                                    38, 203, 255, 0.5),
-                                                Color.fromRGBO(
-                                                    38, 203, 255, 0.48),
-                                              ])),
-                                          child: Text("Connect",
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w600,
-                                              )),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder:
-                                                    (BuildContext context) {
-                                              return LeaderBoard();
-                                            }));
-                                          },
-                                          child: Container(
-                                            margin: EdgeInsets.only(
-                                                left: width * 0.04),
-                                            alignment: Alignment.center,
-                                            height: height * 0.05,
-                                            width: width * 0.28,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                gradient:
-                                                    LinearGradient(colors: [
-                                                  Color.fromRGBO(
-                                                      200, 16, 46, 0.63),
-                                                  Color.fromRGBO(
-                                                      200, 16, 46, 0.76),
-                                                  Color.fromRGBO(
-                                                      200, 16, 46, 0.47),
-                                                ])),
-                                            child: Text("Message",
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w600,
-                                                )),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
+                                  // Container(
+                                  //   margin: EdgeInsets.only(
+                                  //     right: width * 0.07,
+                                  //     top: height * 0.015,
+                                  //   ),
+                                  //   child: Row(
+                                  //     mainAxisAlignment: MainAxisAlignment.end,
+                                  //     children: [
+                                  //       Container(
+                                  //         alignment: Alignment.center,
+                                  //         height: height * 0.05,
+                                  //         width: width * 0.28,
+                                  //         decoration: BoxDecoration(
+                                  //             borderRadius:
+                                  //                 BorderRadius.circular(8),
+                                  //             gradient: LinearGradient(colors: [
+                                  //               Color.fromRGBO(
+                                  //                   38, 203, 255, 0.86),
+                                  //               Color.fromRGBO(
+                                  //                   38, 203, 255, 0.5),
+                                  //               Color.fromRGBO(
+                                  //                   38, 203, 255, 0.48),
+                                  //             ])),
+                                  //         child: Text("Connect",
+                                  //             style: TextStyle(
+                                  //               color: Colors.white,
+                                  //               fontSize: 13,
+                                  //               fontWeight: FontWeight.w600,
+                                  //             )),
+                                  //       ),
+                                  //       GestureDetector(
+                                  //         onTap: () {
+                                  //           Navigator.push(context,
+                                  //               MaterialPageRoute(builder:
+                                  //                   (BuildContext context) {
+                                  //             return LeaderBoard();
+                                  //           }));
+                                  //         },
+                                  //         child: Container(
+                                  //           margin: EdgeInsets.only(
+                                  //               left: width * 0.04),
+                                  //           alignment: Alignment.center,
+                                  //           height: height * 0.05,
+                                  //           width: width * 0.28,
+                                  //           decoration: BoxDecoration(
+                                  //               borderRadius:
+                                  //                   BorderRadius.circular(8),
+                                  //               gradient:
+                                  //                   LinearGradient(colors: [
+                                  //                 Color.fromRGBO(
+                                  //                     200, 16, 46, 0.63),
+                                  //                 Color.fromRGBO(
+                                  //                     200, 16, 46, 0.76),
+                                  //                 Color.fromRGBO(
+                                  //                     200, 16, 46, 0.47),
+                                  //               ])),
+                                  //           child: Text("Message",
+                                  //               style: TextStyle(
+                                  //                 color: Colors.white,
+                                  //                 fontSize: 13,
+                                  //                 fontWeight: FontWeight.w600,
+                                  //               )),
+                                  //         ),
+                                  //       ),
+                                  //     ],
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                             ),

@@ -12,6 +12,7 @@ import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/drawerWidget.dart';
 import 'package:timepass/Widgets/title_Widget.dart';
 import 'package:timepass/main.dart';
+import 'package:video_player/video_player.dart';
 
 class BottomNavigationBarWidget extends StatefulWidget {
   const BottomNavigationBarWidget({Key? key}) : super(key: key);
@@ -25,7 +26,11 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   int item = 0;
 
   List<Widget> _screens = [
-    HomeScreen(),
+    // HomeScreen(),
+    Hero(
+      tag: "Home",
+      child: HomeScreen(),
+    ),
     SearchScreen(),
     StoryAdding(),
     // PostAddScreen(),

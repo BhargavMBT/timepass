@@ -13,6 +13,7 @@ import 'package:timepass/Authentication/createUserProfile.dart';
 import 'package:timepass/Authentication/mobileNoAuthScreen.dart';
 import 'package:timepass/Screens/home_Screen.dart';
 import 'package:timepass/Utils/colors.dart';
+import 'package:timepass/Widgets/animationWidget.dart';
 import 'package:timepass/Widgets/bottomNavigationWidget.dart';
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:http/http.dart' as http;
@@ -65,25 +66,9 @@ class _MyAppState extends State<MyApp> {
       throw Exception("Something went wrong");
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
-          statusBarBrightness: Brightness.light,
-          statusBarIconBrightness: Brightness.dark,
-          systemNavigationBarIconBrightness: Brightness.dark),
-    );
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Timepass',
-      theme: themeData,
-      themeMode: ThemeMode.light,
-      home:
-          // CreateUserProfile(),
-          StreamBuilder(
+  
+ Widget home(){
+   return StreamBuilder(
         stream: auth.authStateChanges(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.connectionState == ConnectionState.active) {
@@ -158,7 +143,27 @@ class _MyAppState extends State<MyApp> {
             );
           }
         },
-      ),
+      );
+ }
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+          systemNavigationBarIconBrightness: Brightness.dark),
+    );
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Timepass',
+      theme: themeData,
+      themeMode: ThemeMode.light,
+      home: home(),
+          // CreateUserProfile(),
+          
     );
   }
 }

@@ -23,4 +23,25 @@ class APIServices {
       throw Exception("Oops! Something went wrong");
     }
   }
+   Future getProfileofChatUsers(String uid) async {
+    try {
+      var url = Uri.parse('$weburl/users/search?_id=$uid');
+      var response;
+      if (xAccessToken != null) {
+        response = await http.get(
+          url,
+        );
+        if (response.statusCode == 200) {
+          // print(response.body);
+          return response.body;
+        } else {
+          throw Exception("Oops! Something went wrong");
+        }
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } catch (e) {
+      throw Exception("Oops! Something went wrong");
+    }
+  }
 }

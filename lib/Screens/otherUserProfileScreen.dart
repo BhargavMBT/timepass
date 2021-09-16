@@ -9,6 +9,7 @@ import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/leaderBoard.dart';
 import 'package:timepass/Screens/profileSettings.dart';
+import 'package:timepass/Screens/profile_Screen.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
 import 'package:http/http.dart' as http;
@@ -61,7 +62,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
           url,
         );
         if (response.statusCode == 200) {
-          print(response.body);
+          // print(response.body);
           return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
@@ -83,7 +84,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
           'x-access-token': xAccessToken!,
         });
         if (response.statusCode == 200) {
-          print(response.body);
           return response.body;
           // return response.body;
         } else {
@@ -97,7 +97,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
     }
   }
 
-  Widget container(double height, double width, String imageUrl) {
+  Widget imageContainer(double height, double width, String imageUrl) {
     return Stack(children: [
       Container(
         margin: EdgeInsets.symmetric(
@@ -152,6 +152,117 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
     ]);
   }
 
+  PostCategory postCategory = PostCategory.Image;
+
+  Widget videoContainer(double height, double width, String url) {
+    return Stack(children: [
+      Container(
+        margin: EdgeInsets.symmetric(
+          horizontal: MediaQuery.of(context).size.width * 0.009,
+        ),
+        height: MediaQuery.of(context).size.height * 0.5,
+        width: MediaQuery.of(context).size.width * 0.5,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey[600]!,
+              blurRadius: 0.07,
+              spreadRadius: 0.07,
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: PostVideoIntializeWidget(
+            url: url,
+          ),
+        ),
+      ),
+      Align(
+        alignment: Alignment.bottomRight,
+        child: Container(
+            height: height * 0.05,
+            margin: EdgeInsets.only(
+              right: width * 0.03,
+              bottom: 0,
+            ),
+            alignment: Alignment.centerRight,
+            child: Container(
+              height: height * 0.06,
+              width: width * 0.06,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black.withOpacity(
+                  0.4,
+                ),
+              ),
+              child: Icon(
+                EvaIcons.share,
+                size: 12,
+                color: Color.fromRGBO(255, 255, 255, 1),
+              ),
+            )),
+      ),
+      Align(
+        alignment: Alignment.center,
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (BuildContext context) {
+              return PostVideoPlayer(
+                url: url,
+              );
+            }));
+          },
+          child: Icon(
+            EvaIcons.playCircleOutline,
+            size: height * 0.035,
+            color: Colors.grey[300],
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  Future createConversation() async {
+    try {
+      var url = Uri.parse('$weburl/conversations/conversation');
+      var body = jsonEncode({
+        "roomName": "Hello !",
+        "users": [userid, widget.id],
+      });
+
+      if (xAccessToken != null) {
+        var response = await http.post(
+          url,
+          body: body,
+          headers: {
+            'x-access-token': xAccessToken!,
+            "Content-Type": "application/json"
+          },
+        );
+        print(response.body);
+        print(response.statusCode.toString());
+        if (response.statusCode == 200) {
+          return response.body;
+          // return response.body;
+        } else if (response.statusCode == 201) {
+          return response.body;
+        } else {
+          throw Exception("Oops! Something went wrong");
+        }
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } catch (e) {
+      print(e.toString());
+      // throw Exception("Oops! Something went wrong");
+    }
+  }
+
   //gridview
   Widget gridview(double height, double width) {
     return FutureBuilder(
@@ -159,37 +270,80 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             var postDataList = jsonDecode(snapshot.data!);
-            List<ProfileModel> _list = [];
+            List<ProfileModel> _totalList = [];
+            List<ProfileModel> _imagelist = [];
+            List<ProfileModel> _videolist = [];
             postDataList.forEach((element) {
               ProfileModel model = ProfileModel.fromJson(element);
-              _list.add(model);
+              _totalList.add(model);
+              if (model.type == "Image") {
+                _imagelist.add(model);
+              } else if (model.type == "Video") {
+                _videolist.add(model);
+              }
             });
-            return _list.isEmpty
+            return _totalList.isEmpty
                 ? Container(
                     height: height * 0.25,
                     alignment: Alignment.center,
                     child: Text("Posts are not generated."))
-                : StaggeredGridView.countBuilder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    itemCount: _list.length,
-                    padding: EdgeInsets.only(
-                      left: width * 0.02,
-                      right: width * 0.02,
-                    ),
-                    itemBuilder: (BuildContext context, int i) {
-                      return container(
-                        height,
-                        width,
-                        _list[i].postUrl!,
-                      );
-                    },
-                    crossAxisSpacing: width * 0.02,
-                    mainAxisSpacing: height * 0.015,
-                    staggeredTileBuilder: (index) {
-                      return StaggeredTile.count(1, index.isOdd ? 1 : 1.4);
-                    });
+                : postCategory == PostCategory.Image
+                    ? _imagelist.isEmpty
+                        ? Container(
+                            height: height * 0.25,
+                            alignment: Alignment.center,
+                            child: Text("Image posts are not generated."))
+                        : StaggeredGridView.countBuilder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            crossAxisCount: 2,
+                            itemCount: _imagelist.length,
+                            padding: EdgeInsets.only(
+                              left: width * 0.02,
+                              right: width * 0.02,
+                            ),
+                            itemBuilder: (BuildContext context, int i) {
+                              return imageContainer(
+                                height,
+                                width,
+                                _imagelist[i].postUrl!,
+                              );
+                            },
+                            crossAxisSpacing: width * 0.02,
+                            mainAxisSpacing: height * 0.015,
+                            staggeredTileBuilder: (index) {
+                              return StaggeredTile.count(
+                                  1, index.isOdd ? 1 : 1.4);
+                            })
+                    : postCategory == PostCategory.Video
+                        ? _videolist.isEmpty
+                            ? Container(
+                                height: height * 0.25,
+                                alignment: Alignment.center,
+                                child: Text("Video posts are not generated."))
+                            : StaggeredGridView.countBuilder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                crossAxisCount: 2,
+                                itemCount: _videolist.length,
+                                padding: EdgeInsets.only(
+                                  left: width * 0.02,
+                                  right: width * 0.02,
+                                ),
+                                itemBuilder: (BuildContext context, int i) {
+                                  return videoContainer(
+                                    height,
+                                    width,
+                                    _videolist[i].postUrl!,
+                                  );
+                                },
+                                crossAxisSpacing: width * 0.02,
+                                mainAxisSpacing: height * 0.015,
+                                staggeredTileBuilder: (index) {
+                                  return StaggeredTile.count(
+                                      1, index.isOdd ? 1 : 1.4);
+                                })
+                        : Container();
           } else if (snapshot.hasError) {
             return Container(
               height: height * 0.25,
@@ -234,14 +388,17 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
     );
   }
 
-  //CenterBar
   Widget centerbar(double height, double width) {
     return Container(
       height: height * 0.072,
       width: width,
-      padding: EdgeInsets.symmetric(
-        horizontal: width * 0.06,
-      ),
+      padding: postCategory == PostCategory.Image
+          ? EdgeInsets.only(right: width * 0.06)
+          : postCategory == PostCategory.Bookmark
+              ? EdgeInsets.only(left: width * 0.06)
+              : EdgeInsets.symmetric(
+                  horizontal: width * 0.06,
+                ),
       margin: EdgeInsets.only(
         top: height * 0.005,
         left: width * 0.08,
@@ -264,21 +421,87 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            Icons.category,
-            size: 31,
-          ),
-          Icon(
-            Icons.play_circle_fill_outlined,
-            size: 31,
-          ),
-          Icon(
-            EvaIcons.bookmark,
-            size: 31,
-          )
+          postCategory == PostCategory.Image
+              ? selectedCatagory(
+                  height,
+                  width,
+                  Icon(
+                    Icons.category,
+                    size: 31,
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      postCategory = PostCategory.Image;
+                    });
+                  },
+                  child: Icon(
+                    Icons.category,
+                    size: 31,
+                  ),
+                ),
+          postCategory == PostCategory.Video
+              ? selectedCatagory(
+                  height,
+                  width,
+                  Icon(
+                    Icons.play_circle_fill_outlined,
+                    size: 31,
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      postCategory = PostCategory.Video;
+                    });
+                  },
+                  child: Icon(
+                    Icons.play_circle_fill_outlined,
+                    size: 31,
+                  ),
+                ),
+          postCategory == PostCategory.Bookmark
+              ? selectedCatagory(
+                  height,
+                  width,
+                  Icon(
+                    EvaIcons.bookmark,
+                    size: 31,
+                  ))
+              : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      postCategory = PostCategory.Bookmark;
+                    });
+                  },
+                  child: Icon(
+                    EvaIcons.bookmark,
+                    size: 31,
+                  ),
+                )
         ],
       ),
     );
+  }
+
+  Widget selectedCatagory(double height, double width, Widget icon) {
+    return Container(
+        width: width * 0.25,
+        height: height * 0.072,
+        decoration: BoxDecoration(
+          gradient: profileCategoryGradient,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Color.fromRGBO(147, 144, 144, 0.25),
+              offset: Offset(0, 7),
+              blurRadius: 10,
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: icon);
   }
 
   Widget storyContainer(
@@ -452,7 +675,13 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
                                       mainAxisAlignment: MainAxisAlignment.end,
                                       children: [
                                         GestureDetector(
-                                          onTap:  removeConnectUser,
+                                          onTap: searchModel[0]
+                                                  .connections!
+                                                  .any((element) =>
+                                                      element["userId"] ==
+                                                      userid)
+                                              ? removeConnectUser
+                                              : connectUser,
                                           child: Container(
                                             alignment: Alignment.center,
                                             height: height * 0.05,
@@ -478,7 +707,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
                                                             whitecolors: true))
                                                 : searchModel[0]
                                                         .connections!
-                                                        .every((element) =>
+                                                        .any((element) =>
                                                             element["userId"] ==
                                                             userid)
                                                     ? Text("Connected",
@@ -498,13 +727,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder:
-                                                    (BuildContext context) {
-                                              return LeaderBoard();
-                                            }));
-                                          },
+                                          onTap: createConversation,
                                           child: Container(
                                             margin: EdgeInsets.only(
                                                 left: width * 0.04),
