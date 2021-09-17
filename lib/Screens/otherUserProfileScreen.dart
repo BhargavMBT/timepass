@@ -1,17 +1,14 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:timepass/API/BasicAPI.dart';
-import 'package:timepass/Authentication/authServices.dart';
-import 'package:timepass/Screens/leaderBoard.dart';
-import 'package:timepass/Screens/profileSettings.dart';
+
 import 'package:timepass/Screens/profile_Screen.dart';
 import 'package:timepass/Utils/colors.dart';
-import 'package:timepass/Widgets/backAerrowWidget.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';

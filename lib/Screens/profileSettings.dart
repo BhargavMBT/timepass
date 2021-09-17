@@ -1,8 +1,8 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+
 import 'package:timepass/Authentication/SignUpScreen.dart';
-import 'package:timepass/Authentication/authServices.dart';
+
 import 'package:timepass/Screens/message_screen.dart';
 import 'package:timepass/Widgets/EnabledNotifications.dart';
 import 'package:timepass/main.dart';

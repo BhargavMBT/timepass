@@ -9,7 +9,9 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/API/BasicAPI.dart';
-import 'package:http/http.dart' as http;
+import 'package:timepass/API/MessageAPI.dart';
+
+import 'package:timepass/Utils/colors.dart';
 
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/models/chatUserModel.dart';
@@ -38,8 +40,6 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     initSocket();
-    // getMessages();
-    // getMessagesupdate();
     super.initState();
   }
 
@@ -66,10 +66,11 @@ class _MessageScreenState extends State<MessageScreen> {
     return cirImage(id, MediaQuery.of(context).size.height);
   }
 
+  // socket initializing.....
   void initSocket() async {
     try {
       socket = IO.io(
-          socketurl,
+          weburl,
           IO.OptionBuilder()
               .setTransports(["websocket"])
               .disableAutoConnect()
@@ -95,69 +96,7 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
   }
 
-  getMessages() async {
-    try {
-      var url = Uri.parse('$weburl/conversations/${widget.roomid}');
-      var response;
-      if (xAccessToken != null) {
-        response = await http.get(
-          url,
-          headers: {
-            'x-access-token': xAccessToken!,
-          },
-        );
-        // print(response.body);
-        if (response.statusCode == 200) {
-          return response.body;
-          // return response.body;
-        } else {
-          throw Exception("Oops! Something went wrong");
-        }
-      } else {
-        throw Exception("Oops! Something went wrong");
-      }
-    } catch (e) {
-      print(e.toString());
-      throw Exception("Oops! Something went wrong");
-    }
-  }
-
-  getMessagesupdate() async {
-    try {
-      // socket.emit("chat message", {
-      //   "sender": userid,
-      //   "message": "Hey",
-      // });
-      print("send");
-      var url = Uri.parse('$weburl/conversations/message/${widget.roomid}');
-      var response;
-      if (xAccessToken != null) {
-        response = await http.patch(
-          url,
-          body: {
-            "sender": userid,
-            "message": "Hey",
-          },
-          headers: {
-            'x-access-token': xAccessToken!,
-          },
-        );
-        // print(response.body);
-        if (response.statusCode == 200) {
-          return response.body;
-          // return response.body;
-        } else {
-          throw Exception("Oops! Something went wrong");
-        }
-      } else {
-        throw Exception("Oops! Something went wrong");
-      }
-    } catch (e) {
-      print(e.toString());
-      throw Exception("Oops! Something went wrong");
-    }
-  }
-
+  // receiver section (message widget)
   Widget receiverSection(
     double height,
     double width,
@@ -177,11 +116,7 @@ class _MessageScreenState extends State<MessageScreen> {
               maxWidth: width * 0.6,
             ),
             child: Bubble(
-              colors: [
-                Color.fromRGBO(226, 134, 14, 1),
-                Color.fromRGBO(255, 179, 79, 1),
-                Color.fromRGBO(255, 179, 79, 1),
-              ],
+              colors: receiverGradient,
               margin: BubbleEdges.only(top: 10),
               stick: true,
               radius: Radius.elliptical(13, 10),
@@ -203,6 +138,7 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
+  // Appbar widget
   Widget appBarTitle(double height, double width) {
     return FutureBuilder(
         future: APIServices().getProfileofChatUsers(widget.receiverUserid!),
@@ -240,6 +176,7 @@ class _MessageScreenState extends State<MessageScreen> {
         });
   }
 
+  // get image from profile api,
   Widget cirImage(String id, double height) {
     return FutureBuilder(
         future: APIServices().getProfileofChatUsers(id),
@@ -265,6 +202,7 @@ class _MessageScreenState extends State<MessageScreen> {
         });
   }
 
+  // sender seection(Message widget)
   Widget senderSection(
     double height,
     double width,
@@ -282,10 +220,7 @@ class _MessageScreenState extends State<MessageScreen> {
               maxWidth: width * 0.6,
             ),
             child: Bubble(
-              colors: [
-                Color.fromRGBO(38, 203, 255, 1),
-                Color.fromRGBO(105, 128, 253, 1),
-              ],
+              colors: senderGradient,
               margin: BubbleEdges.only(top: 10),
               stick: true,
               nip: BubbleNip.rightTop,
@@ -305,6 +240,120 @@ class _MessageScreenState extends State<MessageScreen> {
           // cirImage(userid!, height),
           senderwidgets,
         ],
+      ),
+    );
+  }
+
+  // get message list and build a list
+  Widget messageList(double height, double width) {
+    return Expanded(
+      child: Container(
+        color: Colors.white,
+        child: FutureBuilder(
+            future: MessageAPI().getMessages(widget.roomid!),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                var data = jsonDecode(snapshot.data);
+                List<MessageModel> _listOfMessages = [];
+                data["Messages"].forEach((element) {
+                  MessageModel model = MessageModel.fromJson(element);
+                  _listOfMessages.add(model);
+                });
+
+                return ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    itemCount: _listOfMessages.length,
+                    itemBuilder: (BuildContext context, int i) {
+                      return _listOfMessages[i].senderId == userid
+                          ? senderSection(
+                              height, width, _listOfMessages[i].message!)
+                          : receiverSection(
+                              height, width, _listOfMessages[i].message!);
+                    });
+              } else {
+                return Center(child: circularProgressIndicator());
+              }
+            }),
+        // hardcoded widget, UI implementation
+        // child: ListView(
+        //   physics: BouncingScrollPhysics(),
+        //   children: [
+        //     senderSection(height, width, "Hello How are you?"),
+        //     receiverSection(height, width, "Hello"),
+        //     receiverSection(height, width, "I am fine!"),
+        //     senderSection(height, width, "Nice to meet you"),
+        //     senderSection(height, width,
+        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+        //     receiverSection(height, width,
+        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+        //     senderSection(height, width, "Hello How are you?"),
+        //     receiverSection(height, width, "Hello"),
+        //     receiverSection(height, width, "I am fine!"),
+        //     senderSection(height, width, "Nice to meet you"),
+        //     senderSection(height, width,
+        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+        //     receiverSection(height, width,
+        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
+        //   ],
+        // ),
+      ),
+    );
+  }
+
+  // send  message textfield
+  Widget sendMessageTextField(double height, double width) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Container(
+        color: Colors.white,
+        child: Container(
+          constraints: BoxConstraints(minHeight: height * 0.07),
+          alignment: Alignment.center,
+          padding: EdgeInsets.only(left: width * 0.04),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 0, 0, 0.25),
+                offset: Offset(0, 4),
+                blurRadius: 15,
+                spreadRadius: 0,
+              )
+            ],
+            borderRadius: BorderRadius.circular(30),
+          ),
+          margin: EdgeInsets.symmetric(
+              horizontal: width * 0.04, vertical: height * 0.01),
+          child: Container(
+              child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                    maxLines: 7,
+                    minLines: 1,
+                    controller: messageController,
+                    cursorColor: Colors.black,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Write a message",
+                      hintStyle: TextStyle(
+                        color: Color.fromRGBO(124, 124, 124, 1),
+                        fontWeight: FontWeight.w400,
+                      ),
+                    )),
+              ),
+              IconButton(
+                onPressed: () {
+                  MessageAPI().getMessagesupdate(widget.roomid!);
+                },
+                icon: Icon(
+                  Icons.send_rounded,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          )),
+        ),
       ),
     );
   }
@@ -349,131 +398,8 @@ class _MessageScreenState extends State<MessageScreen> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              color: Colors.white,
-              child: FutureBuilder(
-                  future: getMessages(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasData) {
-                      var data = jsonDecode(snapshot.data);
-                      List<MessageModel> _listOfMessages = [];
-                      data["Messages"].forEach((element) {
-                        MessageModel model = MessageModel.fromJson(element);
-                        _listOfMessages.add(model);
-                      });
-
-                      return ListView.builder(
-                          itemCount: _listOfMessages.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            return _listOfMessages[i].senderId == userid
-                                ? senderSection(
-                                    height, width, _listOfMessages[i].message!)
-                                : receiverSection(
-                                    height, width, _listOfMessages[i].message!);
-                          });
-                    } else {
-                      return Center(child: circularProgressIndicator());
-                    }
-                  }),
-              // child: ListView(
-              //   physics: BouncingScrollPhysics(),
-              //   children: [
-              //     senderSection(height, width, "Hello How are you?"),
-              //     receiverSection(height, width, "Hello"),
-              //     receiverSection(height, width, "I am fine!"),
-              //     senderSection(height, width, "Nice to meet you"),
-              //     senderSection(height, width,
-              //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-              //     receiverSection(height, width,
-              //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-              //     senderSection(height, width, "Hello How are you?"),
-              //     receiverSection(height, width, "Hello"),
-              //     receiverSection(height, width, "I am fine!"),
-              //     senderSection(height, width, "Nice to meet you"),
-              //     senderSection(height, width,
-              //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-              //     receiverSection(height, width,
-              //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-              //   ],
-              // ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              color: Colors.white,
-              child: Container(
-                constraints: BoxConstraints(minHeight: height * 0.07),
-                alignment: Alignment.center,
-                padding: EdgeInsets.only(left: width * 0.04),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color.fromRGBO(0, 0, 0, 0.25),
-                      offset: Offset(0, 4),
-                      blurRadius: 15,
-                      spreadRadius: 0,
-                    )
-                  ],
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                margin: EdgeInsets.symmetric(
-                    horizontal: width * 0.04, vertical: height * 0.01),
-                child: Container(
-                    child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                          maxLines: 7,
-                          minLines: 1,
-                          controller: messageController,
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Write a message",
-                            hintStyle: TextStyle(
-                              color: Color.fromRGBO(124, 124, 124, 1),
-                              fontWeight: FontWeight.w400,
-                            ),
-                            // suffixIcon: Row(
-                            //   mainAxisAlignment: MainAxisAlignment.start,
-                            //   crossAxisAlignment: CrossAxisAlignment.center,
-                            //   mainAxisSize: MainAxisSize.min,
-                            //   children: [
-                            //     IconButton(
-                            //       onPressed: null,
-                            //       icon: Icon(
-                            //         Icons.error_outlined,
-                            //         color: Colors.red[300]!,
-                            //       ),
-                            //     ),
-                            //     IconButton(
-                            //       onPressed: getMessagesupdate,
-                            //       icon: Icon(
-                            //         EvaIcons.plusCircleOutline,
-                            //         color: Colors.black,
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                          )),
-                    ),
-                    messageController.text.isEmpty
-                        ? Container(height: 0, width: 0)
-                        : IconButton(
-                            onPressed: getMessagesupdate,
-                            icon: Icon(
-                              Icons.send_rounded,
-                              color: Colors.black,
-                            ),
-                          ),
-                  ],
-                )),
-              ),
-            ),
-          ),
+          messageList(height, width),
+          sendMessageTextField(height, width),
         ],
       ),
     );

@@ -5,21 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swipecards/flutter_swipecards.dart';
 import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/API/BasicAPI.dart';
-import 'package:timepass/Authentication/authServices.dart';
-import 'package:timepass/Screens/PostAddScreen.dart';
-import 'package:timepass/Screens/StoryAddingScreen.dart';
+
 import 'package:timepass/Screens/participateScreen.dart';
 
-import 'package:timepass/Screens/profile_Screen.dart';
 import 'package:timepass/Screens/storiesScreen.dart';
 import 'package:timepass/Screens/yourStoriesScreen.dart';
 import 'package:timepass/Utils/colors.dart';
-import 'package:timepass/Utils/textStyles.dart';
+
 import 'package:timepass/Utils/textTitleWidgets.dart';
 import 'package:timepass/Widgets/animationWidget.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
-import 'package:timepass/Widgets/drawerWidget.dart';
-import 'package:timepass/Widgets/moreWidget.dart';
+
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/Widgets/title_Widget.dart';
 import 'package:http/http.dart' as http;

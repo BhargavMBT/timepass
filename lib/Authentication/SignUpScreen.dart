@@ -1,11 +1,9 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:timepass/Authentication/OtpVerification.dart';
+
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Authentication/mobileNoAuthScreen.dart';
-import 'package:timepass/Widgets/bottomNavigationWidget.dart';
 
 enum TypeOfAuthentication { Signin, Signup }
 

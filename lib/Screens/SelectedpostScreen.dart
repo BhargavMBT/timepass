@@ -99,6 +99,7 @@ class _SelectedPostScreenState extends State<SelectedPostScreen> {
                     GestureDetector(
                       onTap: () async {
                         File imageFile = widget.file!;
+                        // ignore: unnecessary_null_comparison
                         if (imageFile != null) {
                           fileName = basename(imageFile.path);
                           var image = imageLib.decodeImage(

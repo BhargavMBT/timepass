@@ -34,3 +34,14 @@ LinearGradient profileCategoryGradient = LinearGradient(colors: [
   Color.fromRGBO(38, 203, 255, 1),
   Color.fromRGBO(105, 128, 253, 0.5),
 ]);
+
+List<Color> receiverGradient = [
+  Color.fromRGBO(226, 134, 14, 1),
+  Color.fromRGBO(255, 179, 79, 1),
+  Color.fromRGBO(255, 179, 79, 1),
+];
+
+List<Color> senderGradient = [
+  Color.fromRGBO(38, 203, 255, 1),
+  Color.fromRGBO(105, 128, 253, 1),
+];

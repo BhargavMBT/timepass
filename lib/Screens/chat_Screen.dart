@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Screens/CreateGroup.dart';
 import 'package:timepass/Screens/message_screen.dart';
-import 'package:timepass/Utils/colors.dart';
+
 import 'package:timepass/Widgets/animationWidget.dart';
-import 'package:timepass/Widgets/backAerrowWidget.dart';
+
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';
 import 'package:http/http.dart' as http;
@@ -389,7 +389,7 @@ class _ChatScreenState extends State<ChatScreen> {
             // );
           } else {
             return Container(
-              height: height*0.5,
+              height: height * 0.5,
               child: Center(
                 child: circularProgressIndicator(),
               ),

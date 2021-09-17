@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:chewie/chewie.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
-import 'package:timepass/Screens/PostAddScreen.dart';
+
 import 'package:timepass/Screens/message_screen.dart';
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';

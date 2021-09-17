@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
-import 'package:eva_icons_flutter/icon_data.dart';
+
 import 'package:flutter/material.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/otherUserProfileScreen.dart';
-import 'package:timepass/Screens/profile_Screen.dart';
+
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
-import 'package:timepass/Widgets/moreWidget.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:timepass/Widgets/progressIndicators.dart';
 import 'package:timepass/main.dart';
@@ -66,84 +66,7 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  // AppBar appbarOfHOmepage(double height, double width) {
-  //   return AppBar(
-  //     leading:
-
-  //         GestureDetector(
-  //       onTap: () {
-
-  //         Navigator.push(context,
-  //             MaterialPageRoute(builder: (BuildContext context) {
-  //           return MoreWidget();
-  //         }));
-  //       },
-  //       child: Container(
-  //           margin: EdgeInsets.only(
-  //             left: MediaQuery.of(context).size.width * 0.01,
-  //             top: MediaQuery.of(context).size.height * 0.02,
-  //             bottom: MediaQuery.of(context).size.height * 0.01,
-  //           ),
-  //           alignment: Alignment.center,
-  //           decoration: BoxDecoration(
-  //             shape: BoxShape.circle,
-  //             color: Colors.blue,
-  //           ),
-  //           height: MediaQuery.of(context).size.height * 0.01,
-  //           width: MediaQuery.of(context).size.width * 0.01,
-  //           child: Image(
-  //             alignment: Alignment.center,
-  //             height: MediaQuery.of(context).size.height * 0.02,
-  //             image: AssetImage(
-  //               "Assets/Images/leadingIcon.png",
-  //             ),
-  //           )),
-  //     ),
-  //     //     ;
-  //     //   },
-  //     // ),
-  //     actions: [
-  //       GestureDetector(
-  //         onTap: () {
-  //           Navigator.push(context,
-  //               MaterialPageRoute(builder: (BuildContext context) {
-  //             return ProfileScreen();
-  //           }));
-  //         },
-  //         child: Container(
-  //             margin: EdgeInsets.only(
-  //               right: MediaQuery.of(context).size.width * 0.02,
-  //             ),
-  //             decoration: BoxDecoration(
-  //               shape: BoxShape.circle,
-  //               color: Colors.blue,
-  //             ),
-  //             height: MediaQuery.of(context).size.height * 0.07,
-  //             width: MediaQuery.of(context).size.width * 0.07,
-  //             child: Image(
-  //               alignment: Alignment.center,
-  //               image: AssetImage(
-  //                 "Assets/Images/profileImage.png",
-  //               ),
-  //             )),
-  //       ),
-  //     ],
-  //     elevation: 0,
-  //     title: Container(
-  //       margin: EdgeInsets.only(
-  //         top: MediaQuery.of(context).size.height * 0.011,
-  //       ),
-  //       height: MediaQuery.of(context).size.height * 0.08,
-  //       width: MediaQuery.of(context).size.width * 0.15,
-  //       child: Image.asset(
-  //         "Assets/Images/socioClub2x.png",
-  //         fit: BoxFit.fill,
-  //       ),
-  //     ),
-  //     centerTitle: true,
-  //     backgroundColor: Colors.white,
-  //   );
-  // }
+  
 
   Widget postSwiperWidget(double height, double width) {
     return Align(

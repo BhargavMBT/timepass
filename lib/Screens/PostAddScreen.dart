@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
-import 'package:photofilters/filters/subfilters.dart';
+
 import 'package:story_creator/story_creator.dart';
 
 import 'package:timepass/API/BasicAPI.dart';
@@ -31,16 +31,6 @@ class PostAddScreen extends StatefulWidget {
 }
 
 class _PostAddScreenState extends State<PostAddScreen> {
-  // void initState() {
-  //   super.initState();
-  // }
-
-  // @override
-  // void didChangeDependencies() {
-  //   sheet();
-  //   super.didChangeDependencies();
-  // }
-
   void cameraOpenforImage() async {
     Navigator.pop(context);
     XFile? imageFile =

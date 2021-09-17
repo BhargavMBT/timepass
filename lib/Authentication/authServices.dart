@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:timepass/API/BasicAPI.dart';
-import 'package:timepass/Authentication/OtpVerification.dart';
+
 import 'package:timepass/Authentication/mobileNoAuthScreen.dart';
 import 'package:timepass/Widgets/bottomNavigationWidget.dart';
 import 'package:http/http.dart' as http;
