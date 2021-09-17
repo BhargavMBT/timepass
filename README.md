@@ -1,8 +1,15 @@
-# timepass
+# timepass(Socio Club)
 
 A new Flutter project.
 
 ## Getting Started
+
+### environment for this project.
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+
 
 This project is a starting point for a Flutter application.
 
