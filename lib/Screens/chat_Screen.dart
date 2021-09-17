@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Screens/CreateGroup.dart';
@@ -36,7 +37,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     focusNode = FocusNode();
-    getConversations();
+
     super.initState();
   }
 
@@ -62,7 +63,6 @@ class _ChatScreenState extends State<ChatScreen> {
         throw Exception("Oops! Something went wrong");
       }
     } catch (e) {
-      print(e.toString());
       throw Exception("Oops! Something went wrong");
     }
   }
@@ -308,36 +308,52 @@ class _ChatScreenState extends State<ChatScreen> {
 
               _listUsers.add(model);
             });
-            return ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: _listUsers.length,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int i) {
-                  return GestureDetector(
-                    onTap: () {
-                      navagtionRoute(
-                          context,
-                          MessageScreen(
-                            roomid: _listUsers[i].roomid,
-                            receiverUserid: _listUsers[i].users!.firstWhere(
-                                (element) =>
-                                    element["user"].toString() !=
-                                    userid)["user"],
-                          ));
-                    },
-                    child: userchatSections(
-                        _listUsers[i].users!.firstWhere((element) =>
-                            element["user"].toString() != userid)["user"],
-                        height,
-                        width,
-                        "Harsh",
-                        "Hello karthik..... how are you",
-                        "Assets/Images/Ellipse 7.png",
-                        "7:44 am",
-                        true,
-                        false),
-                  );
-                });
+            return _listUsers.isEmpty
+                ? Container(
+                    height: height * 0.5,
+                    child: Center(
+                      child: Text(
+                        "Conversation is not created!",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white),
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: _listUsers.length,
+                    shrinkWrap: true,
+                    itemBuilder: (BuildContext context, int i) {
+                      return GestureDetector(
+                        onTap: () {
+                          navagtionRoute(
+                              context,
+                              MessageScreen(
+                                roomid: _listUsers[i].roomid,
+                                receiverUserid: _listUsers[i].users!.firstWhere(
+                                    (element) =>
+                                        element["user"].toString() !=
+                                        userid)["user"],
+                              ));
+                        },
+                        child: userchatSections(
+                            _listUsers[i].users!.firstWhere((element) =>
+                                element["user"].toString() != userid)["user"],
+                            height,
+                            width,
+                            "Harsh",
+                            _listUsers[i].meesages!.last["message"],
+                            "Assets/Images/Ellipse 7.png",
+                            DateFormat.jm().format(DateTime.parse(_listUsers[i]
+                                .meesages!
+                                .last["timestamp"]
+                                .toString())),
+                            false,
+                            false),
+                      );
+                    });
             // return ListView(
             //   shrinkWrap: true,
             //   physics: NeverScrollableScrollPhysics(),

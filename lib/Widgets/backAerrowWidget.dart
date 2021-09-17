@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:timepass/API/APIservices.dart';
 import 'package:timepass/Screens/profile_Screen.dart';
@@ -125,21 +126,23 @@ Widget profileIcon(BuildContext context) {
         if (snapshot.hasData) {
           var jsonData = jsonDecode(snapshot.data);
           UserProfile user = UserProfile.fromJson(jsonData);
-          return Container(
-            margin: EdgeInsets.only(
-              right: MediaQuery.of(context).size.width * 0.02,
+          return ClipOval(
+            child: Container(
+              margin: EdgeInsets.only(
+                right: MediaQuery.of(context).size.width * 0.02,
+              ),
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  image: DecorationImage(
+                    fit: BoxFit.contain,
+                    image: CachedNetworkImageProvider(
+                      user.imageurl!,
+                    ),
+                  )),
+              height: MediaQuery.of(context).size.height * 0.07,
+              width: MediaQuery.of(context).size.width * 0.08,
             ),
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(
-                    user.imageurl!,
-                  ),
-                )),
-            height: MediaQuery.of(context).size.height * 0.07,
-            width: MediaQuery.of(context).size.width * 0.08,
           );
         } else if (snapshot.hasError) {
           return Container(

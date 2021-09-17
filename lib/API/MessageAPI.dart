@@ -40,7 +40,7 @@ class MessageAPI {
           url,
           body: {
             "sender": userid,
-            "message": "Hey",
+            "message": "How are you?",
           },
           headers: {
             'x-access-token': xAccessToken!,
