@@ -1,0 +1,34 @@
+ feed                (We will have make an API and send response as it is what we get from it. becuause it is javascript package)
+1 - Reddit meme apis 
+    https://github.com/arifszn/reddit-image-fetcher
+    https://www.arifszn.com/reddit-image-fetcher/
+
+2  - imgflip ,memes                                               ( from this API, we will get only memes templates(in Image format))
+     
+     https://imgflip.com/api
+
+3 - Dadjokes                                                      (from this API, we will get jokes in the format of Text)
+    https://dadjokes.io/showcase/search-jokes
+4 - https://sv443.net/jokeapi/v2/                                 (from this API, we will get jokes in form of Text)
+
+5 blog da https://developer.twingly.com/resources/livefeed/
+6 https://www.socialmediawall.io/pricing                          (from this API, we will get posts from all over social network)
+7 https://rapidapi.com/serg.osipchuk/api/FacebookGraphAPI/details
+
+8 https://rapidapi.com/didenkoradion/api/Flickr/details
+9 https://manystories.readthedocs.io/en/latest/restapi/
+10 https://clubhouse.io/api/rest/v3/#Examples
+11 https://rapidapi.com/ajith/api/love-calculator/details
+
+//12  https://docs.mendix.com/apidocs-mxsdk/apidocs/stories-api                          (SDK for the Manage stories)
+13 https://www.connexun.com/docs/news-api                                              (Get news from this api)
+14 https://rapidapi.com/microsoft-azure-org-microsoft-cognitive-services/api/bing-news-search1/
+15  https://archive.readme.io/docs/item
+16 https://github.com/cyberboysumanjay/JioSaavnAPI
+
+17 https://developers.gettyimages.com/docs/
+18 https://developer.dailymotion.com/api/
+19  https://currentsapi.services/en/profile
+20 https://rapidapi.com/webit/api/webit-news-search/pricing
+21 
+instagram ,fb feed apis too
