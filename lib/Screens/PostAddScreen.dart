@@ -38,7 +38,7 @@ class _PostAddScreenState extends State<PostAddScreen> {
     if (imageFile != null) {
       Navigator.push(context,
           MaterialPageRoute(builder: (BuildContext context) {
-        return SelectedPostScreen(
+        return CustomeFilterScreen(
           file: File(imageFile.path),
         );
       }));

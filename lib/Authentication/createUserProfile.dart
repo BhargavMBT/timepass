@@ -264,7 +264,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
             // 'name': "Milind"
             'email': widget.email,
             'name': controller.text,
-            'phone': "2222222222",
+            'phone': "1234567890",
             'photourl': photoUrl,
             'username': controller.text,
           });
