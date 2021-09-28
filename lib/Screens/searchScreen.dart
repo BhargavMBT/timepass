@@ -66,8 +66,6 @@ class _SearchScreenState extends State<SearchScreen> {
     }
   }
 
-  
-
   Widget postSwiperWidget(double height, double width) {
     return Align(
       alignment: Alignment.bottomRight,

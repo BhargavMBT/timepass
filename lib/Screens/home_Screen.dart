@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipecards/flutter_swipecards.dart';
@@ -171,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   final kInnerDecoration = BoxDecoration(
-    color: Colors.white,
+    color: Colors.black,
     border: Border.all(color: Colors.white),
     borderRadius: BorderRadius.circular(32),
   );
@@ -590,78 +589,78 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 }
-   // Container(
-              //   height: height * 0.55,
-              //   width: double.infinity,
-              //   padding: EdgeInsets.only(left: width * 0.04),
-              //   alignment: Alignment.center,
-              //   child: TinderSwapCard(
-              //     cardController: cardController,
-              //     swipeUp: true,
-              //     swipeDown: true,
-              //     orientation: AmassOrientation.left,
-              //     totalNum: imageItems.length,
-              //     animDuration: 100,
-              //     stackNum: 3,
-              //     swipeEdge: 2.0,
-              //     maxWidth: width * 1.9,
-              //     maxHeight: height * 1.9,
-              //     minWidth: width * 1.8,
-              //     minHeight: height * 1.8,
-              //     cardBuilder: (context, index) => SizedBox(
-              //       height: height,
-              //       width: width,
-              //       child: Stack(
-              //         children: [
-              //           ClipRRect(
-              //             borderRadius: BorderRadius.circular(20),
-              //             child: Image.asset(
-              //               '${imageItems[index]}',
-              //               fit: BoxFit.fill,
-              //             ),
-              //           ),
-              //           Container(
-              //             margin: EdgeInsets.only(
-              //               left: width * 0.028,
-              //               top: height * 0.015,
-              //             ),
-              //             child: ListTile(
-              //               leading: CircleAvatar(
-              //                 backgroundImage: AssetImage(
-              //                   "assets/images/story1.png",
-              //                 ),
-              //               ),
-              //               title: Text(
-              //                 "first lastname",
-              //                 style: TextStyle(
-              //                     fontSize: 16,
-              //                     color: Color.fromRGBO(255, 255, 255, 1)),
-              //               ),
-              //             ),
-              //           ),
-              //           Positioned(
-              //             top: height * 0.35,
-              //             left: width * 0.65,
-              //             child: Icon(
-              //               Icons.share,
-              //               color: Color.fromRGBO(255, 255, 255, 1),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //     swipeUpdateCallback:
-              //         (DragUpdateDetails details, Alignment align) {
-              //       /// Get swiping card's alignment
-              //       if (align.x < 0) {
-              //         //Card is LEFT swiping
-              //       } else if (align.x > 0) {
-              //         //Card is RIGHT swiping
-              //       }
-              //     },
-              //     swipeCompleteCallback:
-              //         (CardSwipeOrientation orientation, int index) {
-              //       /// Get orientation & index of swiped card!
-              //     },
-              //   ),
-              // ),
+// Container(
+//   height: height * 0.55,
+//   width: double.infinity,
+//   padding: EdgeInsets.only(left: width * 0.04),
+//   alignment: Alignment.center,
+//   child: TinderSwapCard(
+//     cardController: cardController,
+//     swipeUp: true,
+//     swipeDown: true,
+//     orientation: AmassOrientation.left,
+//     totalNum: imageItems.length,
+//     animDuration: 100,
+//     stackNum: 3,
+//     swipeEdge: 2.0,
+//     maxWidth: width * 1.9,
+//     maxHeight: height * 1.9,
+//     minWidth: width * 1.8,
+//     minHeight: height * 1.8,
+//     cardBuilder: (context, index) => SizedBox(
+//       height: height,
+//       width: width,
+//       child: Stack(
+//         children: [
+//           ClipRRect(
+//             borderRadius: BorderRadius.circular(20),
+//             child: Image.asset(
+//               '${imageItems[index]}',
+//               fit: BoxFit.fill,
+//             ),
+//           ),
+//           Container(
+//             margin: EdgeInsets.only(
+//               left: width * 0.028,
+//               top: height * 0.015,
+//             ),
+//             child: ListTile(
+//               leading: CircleAvatar(
+//                 backgroundImage: AssetImage(
+//                   "assets/images/story1.png",
+//                 ),
+//               ),
+//               title: Text(
+//                 "first lastname",
+//                 style: TextStyle(
+//                     fontSize: 16,
+//                     color: Color.fromRGBO(255, 255, 255, 1)),
+//               ),
+//             ),
+//           ),
+//           Positioned(
+//             top: height * 0.35,
+//             left: width * 0.65,
+//             child: Icon(
+//               Icons.share,
+//               color: Color.fromRGBO(255, 255, 255, 1),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ),
+//     swipeUpdateCallback:
+//         (DragUpdateDetails details, Alignment align) {
+//       /// Get swiping card's alignment
+//       if (align.x < 0) {
+//         //Card is LEFT swiping
+//       } else if (align.x > 0) {
+//         //Card is RIGHT swiping
+//       }
+//     },
+//     swipeCompleteCallback:
+//         (CardSwipeOrientation orientation, int index) {
+//       /// Get orientation & index of swiped card!
+//     },
+//   ),
+// ),

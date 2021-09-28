@@ -114,7 +114,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'Timepass',
       theme: themeData,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       home: home(),
     );
   }

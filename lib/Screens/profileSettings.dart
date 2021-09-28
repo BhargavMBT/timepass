@@ -2,8 +2,9 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 
 import 'package:timepass/Authentication/SignUpScreen.dart';
-
+import 'package:get/get.dart';
 import 'package:timepass/Screens/message_screen.dart';
+import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/EnabledNotifications.dart';
 import 'package:timepass/main.dart';
 
@@ -57,6 +58,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var dark = false;
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -92,8 +94,10 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               Switch(
                 activeColor: Colors.white,
                 activeTrackColor: Colors.black,
-                value: true,
-                onChanged: (value) {},
+                value: dark,
+                onChanged: (value) {
+                  dark = true;
+                },
               ),
               Icons.brightness_4,
               [
