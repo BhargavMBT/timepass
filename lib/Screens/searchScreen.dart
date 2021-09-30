@@ -187,7 +187,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Text(
         title,
         style: TextStyle(
-          color: titleColor,
+          color: Theme.of(context).accentColor,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -295,12 +295,12 @@ class _SearchScreenState extends State<SearchScreen> {
               screenType = ScreenType.Search;
             });
           }
-        } else {
-          if (screenType == ScreenType.Search) {
-            setState(() {
-              screenType = ScreenType.Explore;
-            });
-          }
+          // } else {
+          //   if (screenType == ScreenType.Search) {
+          //     setState(() {
+          //       screenType = ScreenType.Explore;
+          //     });
+          //   }
         }
       },
       controller: controller,
@@ -341,7 +341,7 @@ class _SearchScreenState extends State<SearchScreen> {
       child: Text(
         title,
         style: TextStyle(
-          color: Colors.black,
+          color: Theme.of(context).accentColor,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
@@ -445,7 +445,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       Text(
                         "Photography",
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).accentColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -467,7 +467,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         child: Text(
                           "PARTICIPATE",
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).accentColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                           ),
@@ -539,7 +539,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: width * 0.08,
                       padding: EdgeInsets.all(7),
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: Theme.of(context).primaryColor,
                         shape: BoxShape.circle,
                       ),
                       child: Image.asset(imageleading)),
@@ -664,7 +664,7 @@ class _SearchScreenState extends State<SearchScreen> {
           title: Text(
             title,
             style: TextStyle(
-              color: Colors.white,
+              color: Theme.of(context).accentColor,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
@@ -733,7 +733,7 @@ class _SearchScreenState extends State<SearchScreen> {
       padding: EdgeInsets.symmetric(
         horizontal: width * 0.03,
       ),
-      color: Theme.of(context).primaryColor,
+      color: Colors.white,
       child: ListView.builder(
           physics: NeverScrollableScrollPhysics(),
           shrinkWrap: true,
@@ -773,12 +773,12 @@ class _SearchScreenState extends State<SearchScreen> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: whiteColor,
+      backgroundColor: Theme.of(context).primaryColor,
       appBar: appbarOfHOmepage(height, width, context),
       body: Stack(
         children: [
           Container(
-            color: Colors.white,
+            color: Theme.of(context).primaryColor,
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               child: screenType == ScreenType.Explore

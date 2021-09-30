@@ -1,27 +1,59 @@
 import 'package:flutter/material.dart';
 
 const Color pcolor = Color.fromRGBO(13, 11, 38, 1);
-const Color whiteColor = Colors.white;
-const Color blackColor = Colors.black;
+const Color prime = Colors.white;
+const Color accent = Colors.black;
 
-ThemeData themeData = ThemeData(
+ThemeData light = ThemeData(
   fontFamily: "Poppins",
-  primaryColor: whiteColor,
-  backgroundColor: whiteColor,
-  accentColor: blackColor,
+  primaryColor: prime,
+  backgroundColor: prime,
+  accentColor: accent,
   textTheme: TextTheme(
       headline5: TextStyle(
     fontSize: 17,
     fontWeight: FontWeight.w700,
-    color: blackColor,
+    color: accent,
   )),
   appBarTheme: AppBarTheme(
-    backgroundColor: whiteColor,
+    backgroundColor: prime,
     iconTheme: IconThemeData(
-      color: blackColor,
+      color: accent,
     ),
   ),
 );
+
+ThemeData dark = ThemeData(
+  fontFamily: "Poppins",
+  primaryColor: Colors.black,
+  backgroundColor: Colors.black,
+  accentColor: Colors.white,
+  textTheme: TextTheme(
+      headline5: TextStyle(
+    fontSize: 17,
+    fontWeight: FontWeight.w700,
+    color: Colors.white,
+  )),
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.black,
+    iconTheme: IconThemeData(
+      color: Colors.white,
+    ),
+  ),
+);
+
+class Mytheme with ChangeNotifier {
+  static bool _isdark = true;
+
+  ThemeMode currentTheme() {
+    return _isdark ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  void SwitchTheme() {
+    _isdark = !_isdark;
+    notifyListeners();
+  }
+}
 
 LinearGradient storyGradient = LinearGradient(colors: [
   Color.fromRGBO(38, 203, 255, 1),

@@ -155,7 +155,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
       borderSide: BorderSide(
-        color: blackColor,
+        color: accent,
       ),
     );
   }
@@ -213,7 +213,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
                   color: Colors.grey[300]!,
                   width: 0.5,
                 ),
-                color: whiteColor,
+                color: prime,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -365,7 +365,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Material(
-      color: whiteColor,
+      color: prime,
       child: Container(
         child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,

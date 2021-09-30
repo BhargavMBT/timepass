@@ -705,7 +705,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     var width = MediaQuery.of(context).size.width;
     return Material(
       child: Container(
-        color: Colors.white,
+        color: Theme.of(context).primaryColor,
         child: ListView(
           physics: AlwaysScrollableScrollPhysics(),
           children: [
@@ -806,7 +806,7 @@ class _PostVideoPlayerState extends State<PostVideoPlayer> {
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).primaryColor,
           elevation: 0,
           centerTitle: true,
           leading: GestureDetector(

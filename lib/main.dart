@@ -11,6 +11,7 @@ import 'package:timepass/API/APIservices.dart';
 
 import 'package:timepass/Authentication/SignUpScreen.dart';
 import 'package:timepass/Authentication/createUserProfile.dart';
+import 'package:timepass/Utils/Config.dart';
 
 import 'package:timepass/Utils/colors.dart';
 
@@ -101,6 +102,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    currentTheme.addListener(() {
+      setState(() {});
+    });
+  }
+
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(
@@ -113,8 +121,9 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Timepass',
-      theme: themeData,
-      themeMode: ThemeMode.dark,
+      theme: light,
+      darkTheme: dark,
+      themeMode: currentTheme.currentTheme(),
       home: home(),
     );
   }

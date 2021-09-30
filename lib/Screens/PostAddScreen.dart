@@ -348,7 +348,7 @@ class _CustomeFilterScreenState extends State<CustomeFilterScreen> {
                         },
                         child: Icon(
                           EvaIcons.textOutline,
-                          color: whiteColor,
+                          color: prime,
                           size: height * 0.04,
                         ),
                       ),

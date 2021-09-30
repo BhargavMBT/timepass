@@ -1,9 +1,8 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-
 import 'package:timepass/Authentication/SignUpScreen.dart';
-import 'package:get/get.dart';
 import 'package:timepass/Screens/message_screen.dart';
+import 'package:timepass/Utils/Config.dart';
 import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/EnabledNotifications.dart';
 import 'package:timepass/main.dart';
@@ -63,7 +62,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
         leading: GestureDetector(
           child: backAerrowButton(height, width),
@@ -76,7 +75,7 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
-            color: Colors.black,
+            color: Theme.of(context).accentColor,
           ),
         ),
         centerTitle: true,
@@ -92,11 +91,12 @@ class _ProfileSettingsScreenState extends State<ProfileSettingsScreen> {
               width,
               "Dark Mode",
               Switch(
-                activeColor: Colors.white,
-                activeTrackColor: Colors.black,
+                // activeColor: Colors.white,
+                // activeTrackColor: Colors.black,
                 value: dark,
                 onChanged: (value) {
                   dark = true;
+                  currentTheme.SwitchTheme();
                 },
               ),
               Icons.brightness_4,

@@ -48,7 +48,7 @@ dependencies:
   story_creator: ^1.0.0
   socket_io_client: ^2.0.0-beta.4-nullsafety.0
   intl: ^0.17.0
-  get:
+  flutter_switch: ^0.3.2
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
