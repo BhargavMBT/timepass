@@ -54,6 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           'x-access-token': xAccessToken!,
         });
         if (response.statusCode == 200) {
+          print(response.body);
           return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
@@ -569,7 +570,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ),
                                             ),
                                             Text(
-                                              "vijayawada,AP",
+                                              "YOUR CITY NAME",
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontWeight: FontWeight.w500,
@@ -592,73 +593,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           ),
                                         ),
                                       ]),
-                                  // Container(
-                                  //   margin: EdgeInsets.only(
-                                  //     right: width * 0.07,
-                                  //     top: height * 0.015,
-                                  //   ),
-                                  //   child: Row(
-                                  //     mainAxisAlignment: MainAxisAlignment.end,
-                                  //     children: [
-                                  //       Container(
-                                  //         alignment: Alignment.center,
-                                  //         height: height * 0.05,
-                                  //         width: width * 0.28,
-                                  //         decoration: BoxDecoration(
-                                  //             borderRadius:
-                                  //                 BorderRadius.circular(8),
-                                  //             gradient: LinearGradient(colors: [
-                                  //               Color.fromRGBO(
-                                  //                   38, 203, 255, 0.86),
-                                  //               Color.fromRGBO(
-                                  //                   38, 203, 255, 0.5),
-                                  //               Color.fromRGBO(
-                                  //                   38, 203, 255, 0.48),
-                                  //             ])),
-                                  //         child: Text("Connect",
-                                  //             style: TextStyle(
-                                  //               color: Colors.white,
-                                  //               fontSize: 13,
-                                  //               fontWeight: FontWeight.w600,
-                                  //             )),
-                                  //       ),
-                                  //       GestureDetector(
-                                  //         onTap: () {
-                                  //           Navigator.push(context,
-                                  //               MaterialPageRoute(builder:
-                                  //                   (BuildContext context) {
-                                  //             return LeaderBoard();
-                                  //           }));
-                                  //         },
-                                  //         child: Container(
-                                  //           margin: EdgeInsets.only(
-                                  //               left: width * 0.04),
-                                  //           alignment: Alignment.center,
-                                  //           height: height * 0.05,
-                                  //           width: width * 0.28,
-                                  //           decoration: BoxDecoration(
-                                  //               borderRadius:
-                                  //                   BorderRadius.circular(8),
-                                  //               gradient:
-                                  //                   LinearGradient(colors: [
-                                  //                 Color.fromRGBO(
-                                  //                     200, 16, 46, 0.63),
-                                  //                 Color.fromRGBO(
-                                  //                     200, 16, 46, 0.76),
-                                  //                 Color.fromRGBO(
-                                  //                     200, 16, 46, 0.47),
-                                  //               ])),
-                                  //           child: Text("Message",
-                                  //               style: TextStyle(
-                                  //                 color: Colors.white,
-                                  //                 fontSize: 13,
-                                  //                 fontWeight: FontWeight.w600,
-                                  //               )),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                             ),
@@ -675,7 +609,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          calculationsWidget(height, width, "100", "Stories"),
+                          calculationsWidget(height, width, "0", "Stories"),
                           calculationsWidget(
                               height,
                               width,

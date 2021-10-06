@@ -40,11 +40,6 @@ class MobileNumberAuthScreen extends StatefulWidget {
 }
 
 class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
-  // int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 45;
-  // CountdownTimerController? controller =  CountdownTimerController(
-  //     endTime: endTime,
-  //     onEnd: timeend,
-  //   );
   String? verficationid;
   bool isloading = false;
   int? forceResendingtoken;
@@ -206,10 +201,6 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
   Widget getOtpButton(double height, double width) {
     return GestureDetector(
       onTap: () {
-        // Navigator.push(context,
-        //     MaterialPageRoute(builder: (BuildContext context) {
-        //   return OtpVerification();
-        // }));
         if (mobileController.text.trim().isNotEmpty &&
             mobileController.text.trim().length == 10) {
           setState(() {
@@ -364,41 +355,6 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
       ),
     );
   }
-
-  // countdowntimer(double height, double width) {
-  //   return Container(
-  //     child: CountdownTimer(
-  //       endTime: endTime,
-  //       controller: controller,
-  //       onEnd: timeend,
-  //       widgetBuilder: (BuildContext context, time) {
-  //         return time == null
-  //             ? Container()
-  //             : Row(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: [
-  //                   Text(
-  //                     time.sec.toString(),
-  //                     style: TextStyle(
-  //                       color: Colors.black,
-  //                       fontSize: 16,
-  //                       fontWeight: FontWeight.w600,
-  //                     ),
-  //                   ),
-  //                   SizedBox(
-  //                     width: width * 0.01,
-  //                   ),
-  //                   Icon(
-  //                     Icons.timer,
-  //                     color: Colors.black,
-  //                   )
-  //                 ],
-  //               );
-  //       },
-  //       endWidget: Container(),
-  //     ),
-  //   );
-  // }
 
   Widget otpScreen(double height, double width) {
     return Material(

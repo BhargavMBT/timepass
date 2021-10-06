@@ -27,7 +27,6 @@ class UserProfile {
   final String? name;
   final String? imageurl;
   final List? connections;
-
   UserProfile({
     this.name,
     this.imageurl,

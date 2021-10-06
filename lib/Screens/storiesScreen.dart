@@ -90,28 +90,26 @@ class _StoriesScreenState extends State<StoriesScreen> {
 
   var sampleUsers = [
     UserModel([
-      StoryModel("assets/images/s4.jpg", "Image", "1"),
-    ], "ABC", "assets/images/profileImage.png"),
-    //https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4
-
+      StoryModel("Assets/Images/s4.jpg", "Image", "1"),
+    ], "ABC", "Assets/Images/profileImage.png"),
     UserModel(
       [
-        StoryModel("assets/images/s5.jpg", "Image", "1"),
-        StoryModel("assets/images/s7.jpg", "Image", "1"),
-        StoryModel("assets/images/s2.jpg", "Image", "1"),
-        StoryModel("assets/images/s8.jpg", "Image", "1"),
+        StoryModel("Assets/Images/s5.jpg", "Image", "1"),
+        StoryModel("Assets/Images/s7.jpg", "Image", "1"),
+        StoryModel("Assets/Images/s2.jpg", "Image", "1"),
+        StoryModel("Assets/Images/s8.jpg", "Image", "1"),
       ],
       "Akshay",
-      "assets/images/profileImage.png",
+      "Assets/Images/profileImage.png",
     ),
     UserModel([
-      StoryModel("assets/images/s4.jpg", "Image", "1"),
-    ], "Xyz", "assets/images/profileImage.png"),
+      StoryModel("Assets/Images/s4.jpg", "Image", "1"),
+    ], "Xyz", "Assets/Images/profileImage.png"),
     UserModel([
-      StoryModel("assets/images/s8.jpg", "Image", "1"),
-      StoryModel("assets/images/s9.jpg", "Image", "1"),
-      StoryModel("assets/images/s3.jpg", "Image", "1"),
-    ], "Hydra Clan", "assets/images/profileImage.png"),
+      StoryModel("Assets/Images/s8.jpg", "Image", "1"),
+      StoryModel("Assets/Images/s9.jpg", "Image", "1"),
+      StoryModel("Assets/Images/s3.jpg", "Image", "1"),
+    ], "Hydra Clan", "Assets/Images/profileImage.png"),
   ];
 
   @override
@@ -197,28 +195,28 @@ class _StoriesScreenState extends State<StoriesScreen> {
                               ),
                               StoryItem(
                                   StoryWidget(
-                                    widget: Image.asset("assets/images/s8.jpg",
+                                    widget: Image.asset("Assets/Images/s8.jpg",
                                         fit: BoxFit.fill),
                                     controller: controller,
                                   ),
                                   duration: Duration(seconds: 10)),
                               StoryItem(
                                   StoryWidget(
-                                    widget: Image.asset("assets/images/s9.jpg",
+                                    widget: Image.asset("Assets/Images/s9.jpg",
                                         fit: BoxFit.fill),
                                     controller: controller,
                                   ),
                                   duration: Duration(seconds: 10)),
                               StoryItem(
                                   StoryWidget(
-                                    widget: Image.asset("assets/images/s5.jpg",
+                                    widget: Image.asset("Assets/Images/s5.jpg",
                                         fit: BoxFit.fill),
                                     controller: controller,
                                   ),
                                   duration: Duration(seconds: 10)),
                               StoryItem(
                                   StoryWidget(
-                                    widget: Image.asset("assets/images/s6.jpg",
+                                    widget: Image.asset("Assets/Images/s6.jpg",
                                         fit: BoxFit.fill),
                                     controller: controller,
                                   ),
@@ -256,7 +254,7 @@ class _StoriesScreenState extends State<StoriesScreen> {
                     child: ListTile(
                       leading: CircleAvatar(
                         backgroundImage: AssetImage(
-                          "assets/images/profileImage.png",
+                          "Assets/Images/profileImage.png",
                         ),
                       ),
                       title: Text(
@@ -530,7 +528,7 @@ class _StoryWidgetState extends State<StoryWidget> {
                           width,
                           "Swetha",
                           "Hello karthik..... how are you",
-                          "assets/images/Ellipse 8.png",
+                          "Assets/Images/Ellipse 8.png",
                           "7:44 am",
                           false),
                       chatSections(
@@ -538,7 +536,7 @@ class _StoryWidgetState extends State<StoryWidget> {
                           width,
                           "Swetha",
                           "Hello karthik..... how are you",
-                          "assets/images/Ellipse 8.png",
+                          "Assets/Images/Ellipse 8.png",
                           "7:44 am",
                           false),
                       Align(

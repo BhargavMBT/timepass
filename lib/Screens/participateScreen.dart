@@ -17,10 +17,10 @@ class Participate extends StatefulWidget {
 
 class _ParticipateState extends State<Participate> {
   List<String> _images = [
-    "assets/images/nature.jpg",
-    "assets/images/nature2.jpg",
-    "assets/images/nature3.jpg",
-    "assets/images/nature4.jpg",
+    "Assets/Images/nature.jpg",
+    "Assets/Images/nature2.jpg",
+    "Assets/Images/nature3.jpg",
+    "Assets/Images/nature4.jpg",
   ];
 
   Widget container(double height, double width) {
@@ -73,7 +73,7 @@ class _ParticipateState extends State<Participate> {
         height: height * 0.25,
         alignment: Alignment.center,
         child: Image.asset(
-          "assets/images/participate.png",
+          "Assets/Images/participate.png",
         ));
   }
 
@@ -191,7 +191,7 @@ class _ParticipateContinueState extends State<ParticipateContinue> {
         height: height * 0.25,
         width: width * 0.5,
         child: Image.asset(
-          "assets/images/participate.png",
+          "Assets/Images/participate.png",
         ));
   }
 
@@ -481,7 +481,7 @@ class _UploadparticipatecontentState extends State<Uploadparticipatecontent> {
                       leading: CircleAvatar(
                         radius: 23,
                         backgroundImage: AssetImage(
-                          "assets/images/profileImage2.png",
+                          "Assets/Images/profileImage2.png",
                         ),
                       ),
                       title: Text(
@@ -529,9 +529,6 @@ class _UploadparticipatecontentState extends State<Uploadparticipatecontent> {
                                   borderRadius: BorderRadius.circular(8),
                                   image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    // image: AssetImage(
-                                    //   "assets/images/s7.jpg",
-                                    // ),
                                     image: FileImage(
                                       file!,
                                     ),

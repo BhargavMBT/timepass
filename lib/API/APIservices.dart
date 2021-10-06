@@ -62,3 +62,25 @@ class APIServices {
     }
   }
 }
+
+Future getStories(String id) async {
+  try {
+    var url = Uri.parse('$weburl/stories/story/$id');
+    var response;
+    if (xAccessToken != null) {
+      response = await http.get(url, headers: {
+        'x-access-token': xAccessToken!,
+      });
+      if (response.statusCode == 200) {
+        print(response.body);
+        return response.body;
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } else {
+      throw Exception("Oops! Something went wrong");
+    }
+  } catch (e) {
+    throw Exception("Oops! Something went wrong");
+  }
+}

@@ -11,18 +11,18 @@ class LeaderBoard extends StatefulWidget {
 
 class _LeaderBoardState extends State<LeaderBoard> {
   List<String> _images = [
-    "assets/images/s9.jpg",
-    "assets/images/s2.jpg",
-    "assets/images/s4.jpg",
-    "assets/images/s5.jpg",
-    "assets/images/s6.jpg",
-    "assets/images/s7.jpg",
-    "assets/images/s8.jpg",
-    "assets/images/s4.jpg",
-    "assets/images/s5.jpg",
-    "assets/images/s6.jpg",
-    "assets/images/s7.jpg",
-    "assets/images/s8.jpg",
+    "Assets/Images/s9.jpg",
+    "Assets/Images/s2.jpg",
+    "Assets/Images/s4.jpg",
+    "Assets/Images/s5.jpg",
+    "Assets/Images/s6.jpg",
+    "Assets/Images/s7.jpg",
+    "Assets/Images/s8.jpg",
+    "Assets/Images/s4.jpg",
+    "Assets/Images/s5.jpg",
+    "Assets/Images/s6.jpg",
+    "Assets/Images/s7.jpg",
+    "Assets/Images/s8.jpg",
   ];
 
   Widget divider(double height, double width) {
@@ -131,7 +131,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                     radius: 35,
                     backgroundColor: Colors.black54,
                     backgroundImage: AssetImage(
-                      "assets/images/profileImage2.png",
+                      "Assets/Images/profileImage2.png",
                     ),
                   ),
                   SizedBox(
@@ -226,7 +226,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                 image: DecorationImage(
                                   fit: BoxFit.fill,
                                   image: AssetImage(
-                                    "assets/images/s9.jpg",
+                                    "Assets/Images/s9.jpg",
                                   ),
                                 ),
                               ),
@@ -243,7 +243,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                   image: DecorationImage(
                                     alignment: Alignment.center,
                                     image: AssetImage(
-                                      "assets/images/trophy.png",
+                                      "Assets/Images/trophy.png",
                                     ),
                                   ),
                                 ),
@@ -286,7 +286,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                 image: DecorationImage(
                                   fit: BoxFit.contain,
                                   image: AssetImage(
-                                    "assets/images/profileImage2.png",
+                                    "Assets/Images/profileImage2.png",
                                   ),
                                 ),
                               ),
@@ -308,7 +308,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                   image: DecorationImage(
                                     alignment: Alignment.center,
                                     image: AssetImage(
-                                      "assets/images/trophy.png",
+                                      "Assets/Images/trophy.png",
                                     ),
                                   ),
                                 ),
@@ -354,7 +354,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                 image: DecorationImage(
                                   fit: BoxFit.fill,
                                   image: AssetImage(
-                                    "assets/images/s5.jpg",
+                                    "Assets/Images/s5.jpg",
                                   ),
                                 ),
                               ),
@@ -371,7 +371,7 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                   image: DecorationImage(
                                     alignment: Alignment.center,
                                     image: AssetImage(
-                                      "assets/images/trophy.png",
+                                      "Assets/Images/trophy.png",
                                     ),
                                   ),
                                 ),
@@ -407,13 +407,13 @@ class _LeaderBoardState extends State<LeaderBoard> {
               SizedBox(
                 height: height * 0.03,
               ),
-              leaderitems(height, width, "#4", "assets/images/s5.jpg",
+              leaderitems(height, width, "#4", "Assets/Images/s5.jpg",
                   "first name", "2.6K"),
               divider(height, width),
-              leaderitems(height, width, "#5", "assets/images/s6.jpg",
+              leaderitems(height, width, "#5", "Assets/Images/s6.jpg",
                   "Second name", "2.6K"),
               divider(height, width),
-              leaderitems(height, width, "#6", "assets/images/s7.jpg",
+              leaderitems(height, width, "#6", "Assets/Images/s7.jpg",
                   "third name", "2.6K"),
               divider(height, width),
             ],

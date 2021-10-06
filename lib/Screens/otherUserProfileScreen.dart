@@ -115,9 +115,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
             image: DecorationImage(
               fit: BoxFit.fill,
               image: NetworkImage(imageUrl),
-              // image: AssetImage(
-              //   'assets/images/s${Random().nextInt(9) + 1}.jpg',
-              // )
             )),
       ),
       Align(

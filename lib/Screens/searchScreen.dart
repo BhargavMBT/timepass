@@ -295,12 +295,6 @@ class _SearchScreenState extends State<SearchScreen> {
               screenType = ScreenType.Search;
             });
           }
-          // } else {
-          //   if (screenType == ScreenType.Search) {
-          //     setState(() {
-          //       screenType = ScreenType.Explore;
-          //     });
-          //   }
         }
       },
       controller: controller,

@@ -534,9 +534,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
     );
   }
+
   // @override
-  // void initState(){
-  //   getAllstories();
+  // void initState() {
+  //   getStories(userid!);
   //   super.initState();
   // }
 

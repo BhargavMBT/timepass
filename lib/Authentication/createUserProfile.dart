@@ -260,11 +260,9 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
               file != null ? await makeImageUrl() : widget.imageurl;
 
           var response = await http.post(url, body: {
-            // 'email': "milindvaghasiya6@gmail.com",
-            // 'name': "Milind"
             'email': widget.email,
             'name': controller.text,
-            'phone': "1234567890",
+            'phone': widget.phoneNumber,
             'photourl': photoUrl,
             'username': controller.text,
           });
