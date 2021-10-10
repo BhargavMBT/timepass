@@ -93,7 +93,7 @@ class _MoreWidgetState extends State<MoreWidget> {
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
-          "More",
+          "Contests",
           style: Theme.of(context).textTheme.headline5,
         ),
       ),

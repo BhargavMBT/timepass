@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:timepass/API/BasicAPI.dart';
 import 'package:timepass/Authentication/authServices.dart';
 import 'package:timepass/Screens/otherUserProfileScreen.dart';
-
-import 'package:timepass/Utils/colors.dart';
 import 'package:timepass/Widgets/backAerrowWidget.dart';
 
 import 'package:http/http.dart' as http;

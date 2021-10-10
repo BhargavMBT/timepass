@@ -42,6 +42,13 @@ class UserProfile {
   }
 }
 
+class UserStories {
+  late final List<dynamic>? story;
+  UserStories({
+    this.story,
+  });
+}
+
 class UserSearchModel {
   final String? name;
   final String? userid;

@@ -2,6 +2,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:timepass/Screens/Contests_screen.dart';
 
 import 'package:timepass/Screens/StoryAddingScreen.dart';
 import 'package:timepass/Screens/chat_Screen.dart';
@@ -27,11 +28,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
     ),
     SearchScreen(),
     StoryAdding(),
-    Container(
-      child: Text("Screen 4"),
-      color: Colors.white,
-      alignment: Alignment.center,
-    ),
+    ContestsScreen(),
     ChatScreen(),
   ];
 

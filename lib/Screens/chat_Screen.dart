@@ -100,7 +100,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   style: TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white),
+                      color: Theme.of(context).accentColor),
                 ),
                 subtitle: Text(
                   subtitle,

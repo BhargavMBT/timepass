@@ -72,7 +72,6 @@ Future getStories(String id) async {
         'x-access-token': xAccessToken!,
       });
       if (response.statusCode == 200) {
-        print(response.body);
         return response.body;
       } else {
         throw Exception("Oops! Something went wrong");
