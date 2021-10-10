@@ -58,9 +58,10 @@ class _ContestsState extends State<Contests> {
               children: [
                 Text(
                   "Available Coins",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 30,
+                    fontSize: 20,
                     letterSpacing: 1.2,
                   ),
                 ),
