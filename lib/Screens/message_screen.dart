@@ -390,7 +390,7 @@ class _MessageScreenState extends State<MessageScreen> {
           IconButton(
             onPressed: null,
             icon: Icon(
-              EvaIcons.moreHorizotnal,
+              EvaIcons.moreHorizontal,
               color: Colors.black,
             ),
           )
