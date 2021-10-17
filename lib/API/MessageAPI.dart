@@ -14,10 +14,8 @@ class MessageAPI {
             'x-access-token': xAccessToken!,
           },
         );
-        // print(response.body);
         if (response.statusCode == 200) {
           return response.body;
-          // return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
         }
@@ -25,14 +23,12 @@ class MessageAPI {
         throw Exception("Oops! Something went wrong");
       }
     } catch (e) {
-      print(e.toString());
       throw Exception("Oops! Something went wrong");
     }
   }
 
   getMessagesupdate(String roomid) async {
     try {
-      print("send");
       var url = Uri.parse('$weburl/conversations/message/$roomid');
       var response;
       if (xAccessToken != null) {
@@ -56,7 +52,6 @@ class MessageAPI {
         throw Exception("Oops! Something went wrong");
       }
     } catch (e) {
-      print(e.toString());
       throw Exception("Oops! Something went wrong");
     }
   }

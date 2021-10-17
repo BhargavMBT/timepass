@@ -36,7 +36,6 @@ class _YourStoriesState extends State<YourStories> {
         'x-access-token': xAccessToken!,
       });
       if (response.statusCode == 200) {
-        print(response.body);
         return response.body;
       } else {
         throw Exception("something went wrong.");
@@ -55,7 +54,6 @@ class _YourStoriesState extends State<YourStories> {
       });
       if (response.statusCode == 200) {
         await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-        print(response.body);
         return response.body;
       } else {
         throw Exception("something went wrong.");
@@ -259,7 +257,6 @@ class _YourStoryWidgetState extends State<YourStoryWidget> {
       });
       if (response.statusCode == 200) {
         await FirebaseStorage.instance.refFromURL(imageUrl).delete();
-        print(response.body);
         return response.body;
       } else {
         throw Exception("something went wrong.");
@@ -272,8 +269,6 @@ class _YourStoryWidgetState extends State<YourStoryWidget> {
   bool ontap = true;
   @override
   Widget build(BuildContext context) {
-    print(widget.id);
-    print(widget.imageurl);
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Column(

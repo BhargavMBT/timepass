@@ -33,7 +33,6 @@ class APIServices {
           url,
         );
         if (response.statusCode == 200) {
-          // print(response.body);
           return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
@@ -65,7 +64,28 @@ class APIServices {
 
 Future getStories(String id) async {
   try {
-    var url = Uri.parse('$weburl/stories/story/$id');
+    var url = Uri.parse('$weburl/stories/story/count/$id');
+    var response;
+    if (xAccessToken != null) {
+      response = await http.get(url, headers: {
+        'x-access-token': xAccessToken!,
+      });
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        throw Exception("Oops! Something went wrong");
+      }
+    } else {
+      throw Exception("Oops! Something went wrong");
+    }
+  } catch (e) {
+    throw Exception("Oops! Something went wrong");
+  }
+}
+
+Future getLikes() async {
+  try {
+    var url = Uri.parse('$weburl/posts/likes/count/');
     var response;
     if (xAccessToken != null) {
       response = await http.get(url, headers: {

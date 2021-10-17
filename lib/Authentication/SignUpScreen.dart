@@ -96,7 +96,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return GestureDetector(
       onTap: () {
         if (authType == TypeOfAuthentication.Signup) {
-          print("sign up");
           bool emailValid = RegExp(
                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
               .hasMatch(emailcontroller.text);
@@ -124,7 +123,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             AuthService().errorDialog(context, "Enter valid email address.");
           }
         } else {
-          print("sign in");
           bool emailValid = RegExp(
                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
               .hasMatch(emailcontroller.text);
@@ -240,8 +238,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
               AuthService().signinwithFacebook(context).then(
                 (User? value) {
                   if (value != null) {
-                    print(value.email);
-                    print(value.displayName);
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (BuildContext context) {
                       return MobileNumberAuthScreen(

@@ -285,7 +285,6 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
                   ),
                 );
               } else {
-                print(widget.credential!);
                 await auth.signInWithCredential(widget.credential!);
 
                 Navigator.pushReplacement(
@@ -302,16 +301,13 @@ class _MobileNumberAuthScreenState extends State<MobileNumberAuthScreen> {
                   ),
                 );
               }
-            } else {
-              print("Error");
-            }
+            } else {}
             setState(() {
               isloading = true;
             });
           } on FirebaseAuthException catch (e) {
             AuthService().errorDialog(context, e.code);
           } catch (e) {
-            print(e.toString());
             setState(() {
               currentState = MobileVerificationState.SHOW_MOBILE_FORM_STATE;
             });

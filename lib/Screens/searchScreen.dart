@@ -46,20 +46,8 @@ class _SearchScreenState extends State<SearchScreen> {
     try {
       var url = Uri.parse("https://www.reddit.com/r/memes.json");
       var data = await http.get(url);
-      // var jsonData = json.decode(data.body);
-
-      // List<Posts> posts=[]
-      // for(var u in jsonData['data']['children']){
-      //     if(post.url.contains('.jpg'){
-      //         Posts post = Posts(url: u['data']['url']);
-      //         posts.add(post);
-      //     }
-      // }
-      // print(data.body);
       return data.body;
     } catch (e) {
-      print(e.toString());
-
       // throw Exception("Soemthing went wrong");
     }
   }
@@ -704,7 +692,6 @@ class _SearchScreenState extends State<SearchScreen> {
             _usersearchModel = searchModel;
             isloading = false;
           });
-          print(response.body);
         } else {
           AuthService().errorDialog(context, "Oops! Something went wrong");
         }

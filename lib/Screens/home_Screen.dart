@@ -71,11 +71,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       var data = await http.get(url);
 
       return data.body;
-    } catch (e) {
-      print(e.toString());
-
-      // throw Exception("Soemthing went wrong");
-    }
+    } catch (e) {}
   }
 
   Widget contestes(double height, double width, String title, String image,
@@ -549,8 +545,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         'x-access-token': xAccessToken!,
       });
       if (response.statusCode == 200) {
-        print(xAccessToken);
-        print(response.body);
       } else {
         throw Exception("something went wrong.");
       }

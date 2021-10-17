@@ -296,7 +296,6 @@ class _StoryVideoSelectedState extends State<StoryVideoSelected> {
       });
 
       if (response.statusCode == 200) {
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Story added successfully!"),
@@ -307,7 +306,6 @@ class _StoryVideoSelectedState extends State<StoryVideoSelected> {
           return MyApp();
         }));
       } else if (response.statusCode == 201) {
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Story added successfully!"),
@@ -324,7 +322,6 @@ class _StoryVideoSelectedState extends State<StoryVideoSelected> {
         AuthService().errorDialog(context, "Something went wrong.");
       }
     } catch (e) {
-      print(e.toString());
       AuthService().errorDialog(context, "Something went wrong.!");
     } finally {
       setState(() {

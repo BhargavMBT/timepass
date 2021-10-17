@@ -59,7 +59,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
           url,
         );
         if (response.statusCode == 200) {
-          // print(response.body);
           return response.body;
         } else {
           throw Exception("Oops! Something went wrong");
@@ -238,8 +237,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
             "Content-Type": "application/json"
           },
         );
-        print(response.body);
-        print(response.statusCode.toString());
         if (response.statusCode == 200) {
           return response.body;
           // return response.body;
@@ -252,7 +249,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
         throw Exception("Oops! Something went wrong");
       }
     } catch (e) {
-      print(e.toString());
       // throw Exception("Oops! Something went wrong");
     }
   }
@@ -581,7 +577,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
         var response = await http.patch(url, headers: {
           'x-access-token': xAccessToken!,
         });
-        print(response.body);
         if (response.statusCode == 200) {
           return response.body;
         } else {
@@ -591,7 +586,6 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
         throw Exception("Oops! Something went wrong");
       }
     } catch (e) {
-      print(e.toString());
       throw Exception("Oops! Something went wrong");
     } finally {
       setState(() {

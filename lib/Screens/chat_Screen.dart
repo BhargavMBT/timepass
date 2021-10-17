@@ -290,7 +290,6 @@ class _ChatScreenState extends State<ChatScreen> {
         throw Exception("Oops! Something went wrong");
       }
     } catch (e) {
-      print(e.toString());
       throw Exception("Oops! Something went wrong");
     }
   }

@@ -247,8 +247,6 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   }
 
   Future postUserData() async {
-    print(controller.text);
-    print(widget.name);
     setState(() {
       loading = true;
     });
@@ -267,10 +265,7 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
             'username': controller.text,
           });
 
-          print(response.statusCode.toString());
-          print(response.body);
           if (response.statusCode == 200) {
-            print('Response body: ${response.body}');
             setState(() {
               xAccessToken = jsonDecode(response.body)['token'];
               userid = jsonDecode(response.body)["result"]["_id"];
@@ -286,7 +281,6 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
               ),
             );
           } else {
-            print("e");
             AuthService().errorDialog(
               context,
               "Oops! Something went wrong.",
@@ -305,7 +299,6 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
         );
       }
     } catch (e) {
-      print(e.toString());
       AuthService().errorDialog(
         context,
         "Oops! Something went wrong",
@@ -315,7 +308,6 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
         loading = false;
       });
     }
-    // print('Response status: ${}');
   }
 
   button(double height, double width) {
@@ -355,11 +347,6 @@ class _CreateUserProfileState extends State<CreateUserProfile> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    print(widget.name.toString());
-    print(widget.email.toString());
-    print(widget.imageurl.toString());
-    print(widget.userid.toString());
-    print(widget.phoneNumber.toString());
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return Material(

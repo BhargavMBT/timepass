@@ -400,7 +400,6 @@ class _FinalScreenState extends State<FinalScreen> {
       });
 
       if (response.statusCode == 200) {
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Story added successfully!"),
@@ -411,7 +410,6 @@ class _FinalScreenState extends State<FinalScreen> {
           return MyApp();
         }));
       } else if (response.statusCode == 201) {
-        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text("Story added successfully!"),
@@ -428,7 +426,6 @@ class _FinalScreenState extends State<FinalScreen> {
         AuthService().errorDialog(context, "Something went wrong.");
       }
     } catch (e) {
-      print(e.toString());
       AuthService().errorDialog(context, "Something went wrong.!");
     } finally {
       setState(() {

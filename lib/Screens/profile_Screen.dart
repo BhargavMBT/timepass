@@ -31,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   PostCategory postCategory = PostCategory.Image;
 
   void initState() {
+    getStories(userid!);
     super.initState();
   }
 
@@ -608,15 +609,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          calculationsWidget(height, width,
-                              getStories(userid!).toString(), "Stories"),
+                          FutureBuilder(
+                              future: getStories(userid!),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  var data = jsonDecode(snapshot.data);
+                                  return calculationsWidget(height, width,
+                                      data.toString(), "Stories");
+                                } else if (snapshot.hasError) {
+                                  return calculationsWidget(
+                                      height, width, "!", "Stories");
+                                } else {
+                                  return Container();
+                                }
+                              }),
                           calculationsWidget(
                               height,
                               width,
                               user.connections!.length.toString(),
                               "Connections"),
-                          calculationsWidget(
-                              height, width, "5K", "Total likes"),
+                          FutureBuilder(
+                              future: getLikes(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  var data2 = jsonDecode(snapshot.data);
+                                  return calculationsWidget(height, width,
+                                      data2.toString(), "Total Likes");
+                                } else if (snapshot.hasError) {
+                                  return calculationsWidget(
+                                      height, width, "0", "Total Likes");
+                                } else {
+                                  return Container();
+                                }
+                              }),
                         ],
                       ),
                     ),
@@ -670,6 +697,7 @@ class _PostVideoIntializeWidgetState extends State<PostVideoIntializeWidget> {
   @override
   void initState() {
     videoPlayerController = VideoPlayerController.network(widget.url!);
+    getStories(userid!);
     videoPlayerController.initialize().then((value) {
       setState(() {});
     });

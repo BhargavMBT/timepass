@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'participateScreen.dart';
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 
 class ContestsScreen extends StatelessWidget {
   const ContestsScreen({Key? key}) : super(key: key);

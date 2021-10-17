@@ -96,7 +96,6 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
   }
 
-  // receiver section (message widget)
   Widget receiverSection(
     double height,
     double width,
@@ -138,7 +137,6 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
-  // Appbar widget
   Widget appBarTitle(double height, double width) {
     return FutureBuilder(
         future: APIServices().getProfileofChatUsers(widget.receiverUserid!),
@@ -162,13 +160,6 @@ class _MessageScreenState extends State<MessageScreen> {
                     fontSize: 15,
                     fontWeight: FontWeight.w400),
               ),
-              // subtitle: Text(
-              //   "active 20 min ago",
-              //   style: TextStyle(
-              //       color: Colors.black,
-              //       fontSize: 10,
-              //       fontWeight: FontWeight.w400),
-              // ),
             );
           } else {
             return Container();
@@ -176,7 +167,6 @@ class _MessageScreenState extends State<MessageScreen> {
         });
   }
 
-  // get image from profile api,
   Widget cirImage(String id, double height) {
     return FutureBuilder(
         future: APIServices().getProfileofChatUsers(id),
@@ -202,7 +192,6 @@ class _MessageScreenState extends State<MessageScreen> {
         });
   }
 
-  // sender seection(Message widget)
   Widget senderSection(
     double height,
     double width,
