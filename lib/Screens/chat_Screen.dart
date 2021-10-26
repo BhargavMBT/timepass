@@ -54,6 +54,7 @@ class _ChatScreenState extends State<ChatScreen> {
         );
 
         if (response.statusCode == 200) {
+          print(response.body);
           return response.body;
           // return response.body;
         } else {
@@ -307,6 +308,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
               _listUsers.add(model);
             });
+            print(_listUsers[0].roomid);
+
             return _listUsers.isEmpty
                 ? Container(
                     height: height * 0.5,
@@ -343,12 +346,15 @@ class _ChatScreenState extends State<ChatScreen> {
                             height,
                             width,
                             "Harsh",
-                            _listUsers[i].meesages!.last["message"],
+                            // _listUsers[i].meesages!.last["message"],
+                            "hello",
                             "Assets/Images/Ellipse 7.png",
-                            DateFormat.jm().format(DateTime.parse(_listUsers[i]
-                                .meesages!
-                                .last["timestamp"]
-                                .toString())),
+                            // DateFormat.jm().format(DateTime.parse(_listUsers[i]
+                            //     .meesages!
+                            //     .last["timestamp"]
+                            //     .toString()))
+                            //    ,
+                            "hello",
                             false,
                             false),
                       );
@@ -651,7 +657,7 @@ class _ChatScreenState extends State<ChatScreen> {
         padding: EdgeInsets.symmetric(
           horizontal: width * 0.04,
         ),
-        color: Theme.of(context).primaryColor,
+        color: Theme.of(context).accentColor,
         child: ListView.builder(
             itemCount: _usersearchModel!.length,
             itemBuilder: (BuildContext context, int i) {
@@ -723,15 +729,6 @@ class _ChatScreenState extends State<ChatScreen> {
           type == ScreenType.Chat
               ? sectionOfChatting(height, width)
               : searchResultWidget(height, width)
-          // KeyboardVisibilityBuilder(builder: (context, child, visible) {
-          //   if (!visible) {
-          //     return sectionOfChatting(height, width);
-          //   } else {
-          //     return Container(
-          //       color: Theme.of(context).primaryColor,
-          //     );
-          //   }
-          // }),
         ],
       ),
     );

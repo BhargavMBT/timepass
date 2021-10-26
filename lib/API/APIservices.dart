@@ -25,6 +25,7 @@ class APIServices {
   }
 
   Future getProfileofChatUsers(String uid) async {
+    print(xAccessToken);
     try {
       var url = Uri.parse('$weburl/users/search?_id=$uid');
       var response;

@@ -59,6 +59,7 @@ class _OtherUserProfileScreenState extends State<OtherUserProfileScreen> {
           url,
         );
         if (response.statusCode == 200) {
+          print(response.body);
           return response.body;
         } else {
           throw Exception("Oops! Something went wrong");

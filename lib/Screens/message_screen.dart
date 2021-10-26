@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:bubble/bubble.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
@@ -263,33 +262,10 @@ class _MessageScreenState extends State<MessageScreen> {
                 return Center(child: circularProgressIndicator());
               }
             }),
-        // hardcoded widget, UI implementation
-        // child: ListView(
-        //   physics: BouncingScrollPhysics(),
-        //   children: [
-        //     senderSection(height, width, "Hello How are you?"),
-        //     receiverSection(height, width, "Hello"),
-        //     receiverSection(height, width, "I am fine!"),
-        //     senderSection(height, width, "Nice to meet you"),
-        //     senderSection(height, width,
-        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-        //     receiverSection(height, width,
-        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-        //     senderSection(height, width, "Hello How are you?"),
-        //     receiverSection(height, width, "Hello"),
-        //     receiverSection(height, width, "I am fine!"),
-        //     senderSection(height, width, "Nice to meet you"),
-        //     senderSection(height, width,
-        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-        //     receiverSection(height, width,
-        //         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."),
-        //   ],
-        // ),
       ),
     );
   }
 
-  // send  message textfield
   Widget sendMessageTextField(double height, double width) {
     return Align(
       alignment: Alignment.bottomCenter,

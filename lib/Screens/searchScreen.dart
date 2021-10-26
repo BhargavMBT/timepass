@@ -675,7 +675,7 @@ class _SearchScreenState extends State<SearchScreen> {
       setState(() {
         isloading = true;
       });
-      var url = Uri.parse('$weburl/users/search?name=$query');
+      var url = Uri.parse('$weburl/users/search?searchQuery=$query');
       var response;
       if (xAccessToken != null) {
         response = await http.get(
@@ -693,6 +693,7 @@ class _SearchScreenState extends State<SearchScreen> {
             isloading = false;
           });
         } else {
+          print(response.statusCode);
           AuthService().errorDialog(context, "Oops! Something went wrong");
         }
       } else {
